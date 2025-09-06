@@ -4,9 +4,10 @@ import type { RegisterData } from '../types/auth';
 
 interface RegisterFormProps {
   onSwitchToLogin: () => void;
+  onRegistrationSuccess?: () => void;
 }
 
-export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
+export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin, onRegistrationSuccess }) => {
   const [formData, setFormData] = useState<RegisterData>({
     username: '',
     password: '',
@@ -43,6 +44,9 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) =
       
       if (!response.success) {
         setError(response.error || '회원가입에 실패했습니다.');
+      } else {
+        // 회원가입 성공 시 승인 대기 화면으로 이동
+        onRegistrationSuccess?.();
       }
     } catch (error) {
       setError('회원가입 중 오류가 발생했습니다.');

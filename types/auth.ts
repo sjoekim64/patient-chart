@@ -5,6 +5,9 @@ export interface User {
   therapistName: string;
   therapistLicenseNo: string;
   createdAt: string;
+  isApproved: boolean;
+  approvedAt?: string;
+  approvedBy?: string;
 }
 
 export interface AuthState {

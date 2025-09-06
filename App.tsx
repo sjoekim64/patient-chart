@@ -4,6 +4,7 @@ import { AuthWrapper } from './components/AuthWrapper';
 import { PatientForm } from './components/PatientForm.tsx';
 import { PrintableView } from './components/PrintableView.tsx';
 import { PatientList } from './components/PatientList.tsx';
+import { AdminDashboard } from './components/AdminDashboard';
 import type { PatientData } from './types.ts';
 import { database } from './lib/database';
 import { initializeSampleData, getNewPatientSample, getFollowUpPatientSample } from './lib/sampleData';
@@ -103,6 +104,10 @@ const PatientChartApp: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+
+  // URL 파라미터 확인 (관리자 대시보드)
+  const urlParams = new URLSearchParams(window.location.search);
+  const isAdminMode = urlParams.get('admin') === 'true';
 
   // 사용자 인증 상태에 따라 데이터 로드
   useEffect(() => {
@@ -292,6 +297,11 @@ const PatientChartApp: React.FC = () => {
 
   if (!isAuthenticated) {
     return <AuthWrapper />;
+  }
+
+  // 관리자 대시보드 모드
+  if (isAdminMode) {
+    return <AdminDashboard />;
   }
 
   return (

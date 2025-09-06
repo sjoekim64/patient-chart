@@ -7,6 +7,9 @@ export interface User {
   therapistName: string;
   therapistLicenseNo: string;
   createdAt: string;
+  isApproved: boolean;
+  approvedAt?: string;
+  approvedBy?: string;
 }
 
 export interface PatientChart {
@@ -102,6 +105,7 @@ export class IndexedDBDatabase {
       therapistName: userData.therapistName,
       therapistLicenseNo: userData.therapistLicenseNo,
       createdAt: new Date().toISOString(),
+      isApproved: false, // 기본적으로 승인되지 않은 상태
     };
 
     const store = await this.getStore('users', 'readwrite');
@@ -139,6 +143,11 @@ export class IndexedDBDatabase {
         const isValidPassword = await this.verifyPassword(credentials.password, user.passwordHash);
         if (!isValidPassword) {
           reject(new Error('비밀번호가 올바르지 않습니다.'));
+          return;
+        }
+
+        if (!user.isApproved) {
+          reject(new Error('관리자 승인을 기다리고 있습니다. 승인 후 로그인할 수 있습니다.'));
           return;
         }
 
@@ -481,6 +490,87 @@ export class IndexedDBDatabase {
     } catch (error) {
       throw new Error('유효하지 않은 토큰입니다.');
     }
+  }
+
+  // 관리자 승인 관련 함수들
+  async getPendingUsers(): Promise<User[]> {
+    if (!this.db) throw new Error('데이터베이스가 초기화되지 않았습니다.');
+    
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(['users'], 'readonly');
+      const store = transaction.objectStore('users');
+      const request = store.getAll();
+      
+      request.onsuccess = () => {
+        const users = request.result.filter((user: User) => !user.isApproved);
+        resolve(users);
+      };
+      
+      request.onerror = () => {
+        reject(new Error('대기 중인 사용자 목록을 가져오는데 실패했습니다.'));
+      };
+    });
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    if (!this.db) throw new Error('데이터베이스가 초기화되지 않았습니다.');
+    
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(['users'], 'readonly');
+      const store = transaction.objectStore('users');
+      const request = store.getAll();
+      
+      request.onsuccess = () => {
+        resolve(request.result);
+      };
+      
+      request.onerror = () => {
+        reject(new Error('사용자 목록을 가져오는데 실패했습니다.'));
+      };
+    });
+  }
+
+  async approveUser(userId: string, approvedBy: string): Promise<void> {
+    if (!this.db) throw new Error('데이터베이스가 초기화되지 않았습니다.');
+    
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(['users'], 'readwrite');
+      const store = transaction.objectStore('users');
+      const request = store.get(userId);
+      
+      request.onsuccess = () => {
+        const user = request.result;
+        if (!user) {
+          reject(new Error('사용자를 찾을 수 없습니다.'));
+          return;
+        }
+        
+        user.isApproved = true;
+        user.approvedAt = new Date().toISOString();
+        user.approvedBy = approvedBy;
+        
+        const updateRequest = store.put(user);
+        updateRequest.onsuccess = () => resolve();
+        updateRequest.onerror = () => reject(new Error('사용자 승인에 실패했습니다.'));
+      };
+      
+      request.onerror = () => {
+        reject(new Error('사용자 정보를 가져오는데 실패했습니다.'));
+      };
+    });
+  }
+
+  async rejectUser(userId: string): Promise<void> {
+    if (!this.db) throw new Error('데이터베이스가 초기화되지 않았습니다.');
+    
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(['users'], 'readwrite');
+      const store = transaction.objectStore('users');
+      const request = store.delete(userId);
+      
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(new Error('사용자 거부에 실패했습니다.'));
+    });
   }
 }
 
