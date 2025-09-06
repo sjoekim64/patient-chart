@@ -534,11 +534,18 @@ Generate the HPI paragraph below:
 `;
 
     try {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        console.log("Starting HPI generation...");
+        console.log("Using API Key: AIzaSyANTMkQtJzhKwxp9sPWdpHHqI9M4RumzRY");
+        
+        const ai = new GoogleGenAI({ apiKey: "AIzaSyANTMkQtJzhKwxp9sPWdpHHqI9M4RumzRY" });
+        console.log("GoogleGenAI instance created");
+        
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
             contents: prompt,
         });
+        
+        console.log("API response received:", response);
 
         const generatedText = response.text;
         
@@ -552,7 +559,12 @@ Generate the HPI paragraph below:
 
     } catch (error) {
         console.error("Error generating Present Illness text:", error);
-        alert("Failed to generate Present Illness text. Please check the console for errors.");
+        console.error("Error details:", {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            stack: error instanceof Error ? error.stack : undefined,
+            name: error instanceof Error ? error.name : undefined
+        });
+        alert(`Failed to generate Present Illness text. Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
         setIsGeneratingHpi(false);
     }
@@ -608,7 +620,10 @@ Instructions:
 - Ensure the output is a valid JSON object only.
 `;
     try {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        console.log("API Key for diagnosis:", process.env.API_KEY ? "Present" : "Missing");
+        console.log("API Key length for diagnosis:", process.env.API_KEY?.length);
+        
+        const ai = new GoogleGenAI({ apiKey: "AIzaSyANTMkQtJzhKwxp9sPWdpHHqI9M4RumzRY" });
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
             contents: prompt,
