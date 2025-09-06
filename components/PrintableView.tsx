@@ -564,7 +564,7 @@ export const PrintableView: React.FC<PrintableViewProps> = ({ data, onEdit, onGo
                         <div className="p-1.5 text-center text-sm">{data.diagnosisAndTreatment.eightPrinciples.yangYin || <span className="text-gray-400">Yang/Yin</span>}</div>
                     </div>
                 </div>
-                <FullWidthRow label="ETIOLOGY" value={data.diagnosisAndTreatment.etiology} />
+                {!isFollowUp && <FullWidthRow label="ETIOLOGY" value={data.diagnosisAndTreatment.etiology} />}
                 <FullWidthRow label="TCM DIAGNOSIS" value={data.diagnosisAndTreatment.tcmDiagnosis} />
             </div>
           </div>
