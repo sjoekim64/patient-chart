@@ -14,21 +14,21 @@ interface PrintableViewProps {
 
 const DataCell: React.FC<{ label: string; value: React.ReactNode; className?: string; }> = ({ label, value, className = '' }) => (
   <div className={`flex border-b border-black ${className}`}>
-    <div className={`w-1/3 font-bold p-2 border-r border-black bg-slate-50 flex items-center`}>{label}</div>
-    <div className={`w-2/3 p-2 flex items-center`}>{value || <span>&nbsp;</span>}</div>
+    <div className={`w-1/3 font-bold p-1.5 text-sm border-r border-black bg-slate-50 flex items-center`}>{label}</div>
+    <div className={`w-2/3 p-1.5 text-sm flex items-center`}>{value || <span>&nbsp;</span>}</div>
   </div>
 );
 
 const VitalsCell: React.FC<{ label: string; value: string; unit: string; className?: string }> = ({ label, value, unit, className='' }) => (
-    <div className={`flex items-baseline p-2 ${className}`}>
-        <span className="font-bold mr-2">{label}</span>
-        <span className="flex-grow border-b border-dotted border-gray-400 text-center">{value || <>&nbsp;</>}</span>
+    <div className={`flex items-baseline p-1.5 ${className}`}>
+        <span className="font-bold mr-2 text-sm">{label}</span>
+        <span className="flex-grow border-b border-dotted border-gray-400 text-center text-sm">{value || <>&nbsp;</>}</span>
         <span className="ml-2 text-sm text-gray-600">{unit}</span>
     </div>
 );
 
 const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
-  <div className="bg-gray-300 text-center font-bold p-2 border-b-2 border-black">
+  <div className="bg-gray-300 text-center font-bold p-1.5 text-sm border-b-2 border-black">
     {title}
   </div>
 );
@@ -401,21 +401,21 @@ export const PrintableView: React.FC<PrintableViewProps> = ({ data, onEdit, onGo
   return (
     <div className="max-w-4xl mx-auto">
        {soapNote && <SoapModal content={soapNote} onClose={() => setSoapNote(null)} />}
-      <div className="bg-white p-2 sm:p-4 md:p-8" id="print-area">
+      <div className="bg-white p-1 sm:p-2 md:p-4" id="print-area">
         
         {/* PAGE 1 CONTAINER */}
         <div className="border-2 border-black">
           {/* Clinic Header */}
           {(data.clinicName || data.clinicLogo) && (
-            <div className="p-4 flex justify-between items-center min-h-[6rem] border-b-2 border-black">
+            <div className="p-2 flex justify-between items-center min-h-[4rem] border-b-2 border-black">
               {data.clinicLogo && (
                 <div className="w-1/4 flex justify-start items-center">
                   <img src={data.clinicLogo} alt="Clinic Logo" className="max-h-20 max-w-full object-contain" />
                 </div>
               )}
               <div className={`text-right ${data.clinicLogo ? 'w-3/4' : 'w-full text-center'}`}>
-                {data.clinicName && <h1 className="text-3xl font-bold text-slate-800">{data.clinicName}</h1>}
-                <h2 className="text-2xl font-semibold text-slate-600">{isFollowUp ? 'Follow-up Patient Chart' : 'New Patient Chart'}</h2>
+                {data.clinicName && <h1 className="text-2xl font-bold text-slate-800">{data.clinicName}</h1>}
+                <h2 className="text-xl font-semibold text-slate-600">{isFollowUp ? 'Follow-up Patient Chart' : 'New Patient Chart'}</h2>
               </div>
             </div>
           )}
