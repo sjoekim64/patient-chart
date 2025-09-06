@@ -310,12 +310,12 @@ export const PrintableView: React.FC<PrintableViewProps> = ({ data, onEdit, onGo
     return (
       <>
         <div className="grid grid-cols-[100px_1fr] border-b border-black">
-          <div className="font-bold p-2 border-r border-black bg-slate-50 flex items-center justify-center">BODY</div>
-          <div className="p-2 break-words min-w-0">{bodyDisplay}</div>
+          <div className="font-bold p-1.5 border-r border-black bg-slate-50 flex items-center justify-center text-sm">BODY</div>
+          <div className="p-1.5 break-words min-w-0 text-sm">{bodyDisplay}</div>
         </div>
         <div className="grid grid-cols-[100px_1fr]">
-          <div className="font-bold p-2 border-r border-black bg-slate-50 flex items-center justify-center">COATING</div>
-          <div className="p-2 break-words min-w-0">{coatingDisplay}</div>
+          <div className="font-bold p-1.5 border-r border-black bg-slate-50 flex items-center justify-center text-sm">COATING</div>
+          <div className="p-1.5 break-words min-w-0 text-sm">{coatingDisplay}</div>
         </div>
       </>
     );
@@ -360,12 +360,12 @@ export const PrintableView: React.FC<PrintableViewProps> = ({ data, onEdit, onGo
     return (
         <>
             <div className="grid grid-cols-[150px_1fr] border-b border-black">
-                <div className="font-bold p-2 border-r border-black bg-slate-50 flex items-center justify-center">Overall Qualities</div>
-                <div className="p-2 break-words min-w-0">{pulse.overall.join(', ') || <span>&nbsp;</span>}</div>
+                <div className="font-bold p-1.5 border-r border-black bg-slate-50 flex items-center justify-center text-sm">Overall Qualities</div>
+                <div className="p-1.5 break-words min-w-0 text-sm">{pulse.overall.join(', ') || <span>&nbsp;</span>}</div>
             </div>
             <div className="grid grid-cols-[150px_1fr]">
-                <div className="font-bold p-2 border-r border-black bg-slate-50 flex items-center justify-center">Notes</div>
-                <div className="p-2 break-words min-w-0 whitespace-pre-wrap">{pulse.notes || <span>&nbsp;</span>}</div>
+                <div className="font-bold p-1.5 border-r border-black bg-slate-50 flex items-center justify-center text-sm">Notes</div>
+                <div className="p-1.5 break-words min-w-0 whitespace-pre-wrap text-sm">{pulse.notes || <span>&nbsp;</span>}</div>
             </div>
         </>
     );
@@ -556,12 +556,12 @@ export const PrintableView: React.FC<PrintableViewProps> = ({ data, onEdit, onGo
             <SectionHeader title="DIAGNOSIS" />
             <div>
                 <div className="grid grid-cols-[200px_1fr] border-b border-black">
-                    <div className="font-bold p-2 border-r border-black bg-slate-50 flex items-center justify-center">EIGHT PRINCIPLES</div>
+                    <div className="font-bold p-1.5 border-r border-black bg-slate-50 flex items-center justify-center text-sm">EIGHT PRINCIPLES</div>
                     <div className="grid grid-cols-4">
-                        <div className="p-2 border-r border-black text-center">{data.diagnosisAndTreatment.eightPrinciples.exteriorInterior || <span className="text-gray-400">Ext/Int</span>}</div>
-                        <div className="p-2 border-r border-black text-center">{data.diagnosisAndTreatment.eightPrinciples.heatCold || <span className="text-gray-400">Heat/Cold</span>}</div>
-                        <div className="p-2 border-r border-black text-center">{data.diagnosisAndTreatment.eightPrinciples.excessDeficient || <span className="text-gray-400">Exc/Def</span>}</div>
-                        <div className="p-2 text-center">{data.diagnosisAndTreatment.eightPrinciples.yangYin || <span className="text-gray-400">Yang/Yin</span>}</div>
+                        <div className="p-1.5 border-r border-black text-center text-sm">{data.diagnosisAndTreatment.eightPrinciples.exteriorInterior || <span className="text-gray-400">Ext/Int</span>}</div>
+                        <div className="p-1.5 border-r border-black text-center text-sm">{data.diagnosisAndTreatment.eightPrinciples.heatCold || <span className="text-gray-400">Heat/Cold</span>}</div>
+                        <div className="p-1.5 border-r border-black text-center text-sm">{data.diagnosisAndTreatment.eightPrinciples.excessDeficient || <span className="text-gray-400">Exc/Def</span>}</div>
+                        <div className="p-1.5 text-center text-sm">{data.diagnosisAndTreatment.eightPrinciples.yangYin || <span className="text-gray-400">Yang/Yin</span>}</div>
                     </div>
                 </div>
                 <FullWidthRow label="ETIOLOGY" value={data.diagnosisAndTreatment.etiology} />
