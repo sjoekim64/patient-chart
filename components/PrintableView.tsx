@@ -35,21 +35,21 @@ const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
 
 const PairedComplaintRow: React.FC<{ item1: {label: string, value: React.ReactNode}, item2: {label: string, value: React.ReactNode} }> = ({ item1, item2 }) => (
     <div className="grid grid-cols-1 md:grid-cols-2 border-b border-black">
-      <div className="grid grid-cols-[auto_1fr] border-r border-black">
-         <div className="font-bold p-1 border-r border-black bg-slate-50 flex items-center w-28 justify-start pl-2">{item1.label}</div>
-         <div className="p-1 break-words min-w-0 flex items-center">{item1.value || <span className="text-gray-400">N/A</span>}</div>
+      <div className="grid grid-cols-[150px_1fr] border-r border-black">
+         <div className="font-bold p-1.5 border-r border-black bg-slate-50 flex items-center justify-center text-sm">{item1.label}</div>
+         <div className="p-1.5 break-words min-w-0 flex items-center text-sm">{item1.value || <span className="text-gray-400">N/A</span>}</div>
       </div>
-      <div className="grid grid-cols-[auto_1fr]">
-         <div className="font-bold p-1 border-r border-black bg-slate-50 flex items-center w-28 justify-start pl-2">{item2.label}</div>
-         <div className="p-1 break-words min-w-0 flex items-center">{item2.value || <span className="text-gray-400">N/A</span>}</div>
+      <div className="grid grid-cols-[150px_1fr]">
+         <div className="font-bold p-1.5 border-r border-black bg-slate-50 flex items-center justify-center text-sm">{item2.label}</div>
+         <div className="p-1.5 break-words min-w-0 flex items-center text-sm">{item2.value || <span className="text-gray-400">N/A</span>}</div>
       </div>
     </div>
 );
 
 const SingleComplaintRow: React.FC<{ label: string; value: React.ReactNode; }> = ({ label, value }) => (
-    <div className="grid grid-cols-[auto_1fr] border-b border-black">
-        <div className="font-bold p-1 border-r border-black bg-slate-50 flex items-center w-28 justify-start pl-2">{label}</div>
-        <div className="p-1 break-words min-w-0 flex items-center">{value || <span className="text-gray-400">N/A</span>}</div>
+    <div className="grid grid-cols-[150px_1fr] border-b border-black">
+        <div className="font-bold p-1.5 border-r border-black bg-slate-50 flex items-center justify-center text-sm">{label}</div>
+        <div className="p-1.5 break-words min-w-0 flex items-center text-sm">{value || <span className="text-gray-400">N/A</span>}</div>
     </div>
 );
 
@@ -374,9 +374,9 @@ export const PrintableView: React.FC<PrintableViewProps> = ({ data, onEdit, onGo
   const chiefComplaintContent = () => (
     <>
         <div className="flex border-b border-black">
-            <div className="grid grid-cols-[auto_1fr] w-full">
-                <div className="font-bold p-2 border-r border-black bg-gray-300 flex items-center justify-center w-full md:w-auto">CHIEF COMPLAINT(S)</div>
-                <div className="p-2 flex items-center">{allComplaints}</div>
+            <div className="grid grid-cols-[150px_1fr] w-full">
+                <div className="font-bold p-1.5 border-r border-black bg-gray-300 flex items-center justify-center text-sm">CHIEF COMPLAINT(S)</div>
+                <div className="p-1.5 flex items-center text-sm">{allComplaints}</div>
             </div>
         </div>
         {!isFollowUp ? (
