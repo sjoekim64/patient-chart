@@ -56,8 +56,8 @@ const SingleComplaintRow: React.FC<{ label: string; value: React.ReactNode; }> =
 
 const FullWidthRow: React.FC<{ label: string; value: React.ReactNode; isLast?: boolean }> = ({ label, value, isLast=false }) => (
     <div className={`grid grid-cols-[200px_1fr] ${!isLast ? 'border-b border-black' : ''}`}>
-        <div className="font-bold p-2 border-r border-black bg-slate-50 flex items-center justify-center">{label}</div>
-        <div className="p-2 break-words min-w-0">{value || <span className="text-gray-400">N/A</span>}</div>
+        <div className="font-bold p-1.5 border-r border-black bg-slate-50 flex items-center justify-center text-sm">{label}</div>
+        <div className="p-1.5 break-words min-w-0 text-sm">{value || <span className="text-gray-400">N/A</span>}</div>
     </div>
 );
 
@@ -505,20 +505,20 @@ export const PrintableView: React.FC<PrintableViewProps> = ({ data, onEdit, onGo
           {!isFollowUp && (
               <div className="grid grid-cols-2 border-b-2 border-black">
                   <div className="border-r border-b border-black flex">
-                      <div className="w-1/3 bg-gray-300 p-2 font-bold flex items-center text-center justify-center border-r border-black">Past Medical History</div>
-                      <div className="w-2/3 p-2 break-words min-w-0">{pastMedicalHistoryDisplay || <span className="text-gray-400">N/A</span>}</div>
+                      <div className="w-1/3 bg-gray-300 p-1.5 font-bold flex items-center text-center justify-center border-r border-black text-sm">Past Medical History</div>
+                      <div className="w-2/3 p-1.5 break-words min-w-0 text-sm">{pastMedicalHistoryDisplay || <span className="text-gray-400">N/A</span>}</div>
                   </div>
                   <div className="border-b border-black flex">
-                      <div className="w-1/3 bg-gray-300 p-2 font-bold flex items-center text-center justify-center border-r border-black">Medication</div>
-                      <div className="w-2/3 p-2 break-words min-w-0">{medicationDisplay || <span className="text-gray-400">N/A</span>}</div>
+                      <div className="w-1/3 bg-gray-300 p-1.5 font-bold flex items-center text-center justify-center border-r border-black text-sm">Medication</div>
+                      <div className="w-2/3 p-1.5 break-words min-w-0 text-sm">{medicationDisplay || <span className="text-gray-400">N/A</span>}</div>
                   </div>
                   <div className="border-r border-black flex">
-                      <div className="w-1/3 bg-gray-300 p-2 font-bold flex items-center text-center justify-center border-r border-black">Family Hx.</div>
-                      <div className="w-2/3 p-2 break-words min-w-0">{familyHistoryDisplay || <span className="text-gray-400">N/A</span>}</div>
+                      <div className="w-1/3 bg-gray-300 p-1.5 font-bold flex items-center text-center justify-center border-r border-black text-sm">Family Hx.</div>
+                      <div className="w-2/3 p-1.5 break-words min-w-0 text-sm">{familyHistoryDisplay || <span className="text-gray-400">N/A</span>}</div>
                   </div>
                   <div className="flex">
-                      <div className="w-1/3 bg-gray-300 p-2 font-bold flex items-center text-center justify-center border-r border-black">Allergy</div>
-                      <div className="w-2/3 p-2 break-words min-w-0">{allergyDisplay || <span className="text-gray-400">N/A</span>}</div>
+                      <div className="w-1/3 bg-gray-300 p-1.5 font-bold flex items-center text-center justify-center border-r border-black text-sm">Allergy</div>
+                      <div className="w-2/3 p-1.5 break-words min-w-0 text-sm">{allergyDisplay || <span className="text-gray-400">N/A</span>}</div>
                   </div>
               </div>
           )}
@@ -580,12 +580,12 @@ export const PrintableView: React.FC<PrintableViewProps> = ({ data, onEdit, onGo
 
               <div className="grid grid-cols-2">
                   <div className="flex border-r border-black">
-                      <div className="w-1/3 font-bold p-2 border-r border-black bg-slate-100 flex items-center justify-center">ICD</div>
-                      <div className="w-2/3 p-2 flex items-center">{data.diagnosisAndTreatment.icd}</div>
+                      <div className="w-1/3 font-bold p-1.5 border-r border-black bg-slate-100 flex items-center justify-center text-sm">ICD</div>
+                      <div className="w-2/3 p-1.5 flex items-center text-sm">{data.diagnosisAndTreatment.icd}</div>
                   </div>
                   <div className="flex">
-                      <div className="w-1/3 font-bold p-2 border-r border-black bg-slate-100 flex items-center justify-center">CPT</div>
-                      <div className="w-2/3 p-2 flex items-center">{data.diagnosisAndTreatment.cpt}</div>
+                      <div className="w-1/3 font-bold p-1.5 border-r border-black bg-slate-100 flex items-center justify-center text-sm">CPT</div>
+                      <div className="w-2/3 p-1.5 flex items-center text-sm">{data.diagnosisAndTreatment.cpt}</div>
                   </div>
               </div>
             </div>
