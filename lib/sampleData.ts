@@ -283,13 +283,7 @@ export const initializeTestUser = async () => {
     } else {
       console.log('테스트 사용자 계정이 이미 존재합니다.');
       
-      // 승인되지 않은 경우 승인 처리
-      if (!existingUser.isApproved) {
-        await database.approveUser(existingUser.id, 'admin');
-        console.log('테스트 사용자 계정이 승인되었습니다.');
-        return { userCreated: false, userApproved: true };
-      }
-      
+      // 기존 사용자는 승인 상태를 변경하지 않음 (관리자가 수동으로 승인해야 함)
       return { userCreated: false, userApproved: existingUser.isApproved };
     }
   } catch (error) {
