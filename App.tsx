@@ -103,7 +103,7 @@ const PatientChartApp: React.FC = () => {
   const [clinicInfo, setClinicInfo] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading, logout } = useAuth();
 
   // URL 파라미터 확인 (관리자 대시보드)
   const urlParams = new URLSearchParams(window.location.search);
@@ -315,6 +315,12 @@ const PatientChartApp: React.FC = () => {
           <div className="text-right">
             <p className="text-sm text-gray-600">환영합니다, {user?.therapistName}님</p>
             <p className="text-xs text-gray-500">{user?.clinicName}</p>
+            <button
+              onClick={logout}
+              className="mt-2 px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+            >
+              로그아웃
+            </button>
           </div>
         </div>
       </header>
