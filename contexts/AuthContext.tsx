@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 import type { User, AuthState, LoginCredentials, RegisterData, AuthResponse } from '../types/auth';
 import { database } from '../lib/database';
+import { sendLoginNotification, getClientIP, getBrowserInfo } from '../lib/emailService';
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<AuthResponse>;
@@ -83,13 +84,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           token: result.token 
         } 
       });
+
+      // 로그인 성공 시 이메일 알림 발송 (비동기로 처리하여 로그인 속도에 영향 없음)
+      sendLoginNotification({
+        username: result.user.username,
+        clinicName: result.user.clinicName,
+        therapistName: result.user.therapistName,
+        loginTime: new Date().toLocaleString('ko-KR'),
+        userAgent: getBrowserInfo(),
+        ipAddress: await getClientIP()
+      }).catch(error => {
+        console.error('로그인 알림 이메일 발송 실패:', error);
+        // 이메일 발송 실패는 로그인에 영향을 주지 않음
+      });
       
       return { success: true, data: result };
     } catch (error) {
       dispatch({ type: 'LOGIN_FAILURE' });
       return { 
         success: false, 
-        error: error instanceof Error ? error.message : '로그인 중 오류가 발생했습니다.' 
+        error: error instanceof Error ? error.message : '로그인 중 오류가 발생했습니다.'
       };
     }
   };
