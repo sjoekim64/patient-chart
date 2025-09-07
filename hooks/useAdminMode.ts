@@ -8,10 +8,13 @@ export const useAdminMode = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const adminParam = urlParams.get('admin') === 'true';
       
-      // URL 파라미터가 있으면 localStorage에 저장
+      // URL 파라미터가 있으면 localStorage에 저장, 없으면 정리
       if (adminParam) {
         localStorage.setItem('adminMode', 'true');
         console.log('💾 관리자 모드 URL 파라미터를 localStorage에 저장');
+      } else {
+        localStorage.removeItem('adminMode');
+        console.log('🧹 관리자 모드 localStorage 정리');
       }
       
       // localStorage에서 관리자 모드 확인
