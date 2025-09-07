@@ -107,6 +107,15 @@ const PatientChartApp: React.FC = () => {
   const { user, isAuthenticated, isLoading: authLoading, logout } = useAuth();
   const { isAdminMode, clearAdminMode } = useAdminMode();
 
+  // 로그인 시 자동으로 관리자 대시보드로 이동
+  useEffect(() => {
+    if (isAuthenticated && user && user.username === 'sjoekim') {
+      console.log('🔑 관리자 로그인 감지 - 관리자 대시보드로 이동');
+      window.history.replaceState({}, '', window.location.pathname + '?admin=true');
+      window.location.reload();
+    }
+  }, [isAuthenticated, user]);
+
   // 사용자 인증 상태에 따라 데이터 로드
   useEffect(() => {
     if (isAuthenticated && user) {

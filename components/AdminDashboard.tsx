@@ -53,6 +53,21 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleDeleteUser = async (userId: string, username: string) => {
+    if (!confirm(`${username} 사용자를 완전히 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.`)) {
+      return;
+    }
+    
+    try {
+      await database.deleteUser(userId);
+      setMessage({ type: 'success', text: `${username} 사용자를 삭제했습니다.` });
+      loadUsers(); // 목록 새로고침
+    } catch (error) {
+      console.error('사용자 삭제 실패:', error);
+      setMessage({ type: 'error', text: '사용자 삭제에 실패했습니다.' });
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString('ko-KR');
   };
@@ -161,6 +176,7 @@ export const AdminDashboard: React.FC = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상태</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">가입일</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">승인일</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">작업</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -189,6 +205,14 @@ export const AdminDashboard: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {user.approvedAt ? formatDate(user.approvedAt) : '-'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <button
+                          onClick={() => handleDeleteUser(user.id, user.username)}
+                          className="text-red-600 hover:text-red-900 font-medium"
+                        >
+                          삭제
+                        </button>
                       </td>
                     </tr>
                   ))}

@@ -43,19 +43,7 @@ export const sendLoginNotification = async (data: LoginNotificationData): Promis
 - IP 주소: ${data.ipAddress || '알 수 없음'}
 - 브라우저: ${data.userAgent}
 
-관리자 대시보드에서 확인하세요:
-
-🔗 관리자 대시보드 링크:
-https://patient-chart.netlify.app/?admin=true
-
-📋 사용 방법:
-1. 위 링크를 복사하세요
-2. 새 탭을 열고 주소창에 붙여넣기
-3. Enter 키를 누르세요
-4. 로그인: sjoekim / Joe007007
-
-⚠️ 이메일에서 직접 클릭하면 작동하지 않을 수 있습니다.
-   반드시 링크를 복사해서 새 탭에서 열어주세요.
+로그인이 감지되었습니다.
       `.trim()
     };
 

@@ -572,6 +572,19 @@ export class IndexedDBDatabase {
       request.onerror = () => reject(new Error('사용자 거부에 실패했습니다.'));
     });
   }
+
+  async deleteUser(userId: string): Promise<void> {
+    if (!this.db) throw new Error('데이터베이스가 초기화되지 않았습니다.');
+    
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(['users'], 'readwrite');
+      const store = transaction.objectStore('users');
+      const request = store.delete(userId);
+      
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(new Error('사용자 삭제에 실패했습니다.'));
+    });
+  }
 }
 
 // 싱글톤 인스턴스
