@@ -105,9 +105,15 @@ const PatientChartApp: React.FC = () => {
 
   const { user, isAuthenticated, isLoading: authLoading, logout } = useAuth();
 
+  // URL 파라미터 확인 (관리자 대시보드) - 상태로 관리
+  const [isAdminMode, setIsAdminMode] = useState(false);
+
   // URL 파라미터 확인 (관리자 대시보드)
-  const urlParams = new URLSearchParams(window.location.search);
-  const isAdminMode = urlParams.get('admin') === 'true';
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const adminParam = urlParams.get('admin') === 'true';
+    setIsAdminMode(adminParam);
+  }, []);
 
   // 사용자 인증 상태에 따라 데이터 로드
   useEffect(() => {
