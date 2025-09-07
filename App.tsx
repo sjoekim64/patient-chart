@@ -113,12 +113,24 @@ const PatientChartApp: React.FC = () => {
     const checkAdminMode = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const adminParam = urlParams.get('admin') === 'true';
+      
+      // URL 파라미터가 있으면 localStorage에 저장
+      if (adminParam) {
+        localStorage.setItem('adminMode', 'true');
+        console.log('💾 관리자 모드 URL 파라미터를 localStorage에 저장');
+      }
+      
+      // localStorage에서 관리자 모드 확인
+      const savedAdminMode = localStorage.getItem('adminMode') === 'true';
+      const finalAdminMode = adminParam || savedAdminMode;
+      
       console.log('🔍 URL 파라미터 확인:');
       console.log('  URL:', window.location.href);
       console.log('  Search:', window.location.search);
       console.log('  Admin param:', urlParams.get('admin'));
-      console.log('  IsAdminMode:', adminParam);
-      setIsAdminMode(adminParam);
+      console.log('  Saved admin mode:', savedAdminMode);
+      console.log('  Final IsAdminMode:', finalAdminMode);
+      setIsAdminMode(finalAdminMode);
     };
     
     // 즉시 확인
@@ -372,7 +384,10 @@ const PatientChartApp: React.FC = () => {
             <p className="text-sm text-gray-600">환영합니다, {user?.therapistName}님</p>
             <p className="text-xs text-gray-500">{user?.clinicName}</p>
             <button
-              onClick={logout}
+              onClick={() => {
+                localStorage.removeItem('adminMode');
+                logout();
+              }}
               className="mt-2 px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
             >
               로그아웃
