@@ -58,6 +58,8 @@ https://patient-chart.netlify.app/?admin=true
       return false;
     }
 
+    console.log('📧 전송할 템플릿 파라미터:', templateParams);
+    
     const response = await emailjs.send(
       EMAILJS_SERVICE_ID,
       EMAILJS_TEMPLATE_ID,
@@ -67,7 +69,13 @@ https://patient-chart.netlify.app/?admin=true
     console.log('✅ 로그인 알림 이메일 발송 성공:', response);
     return true;
   } catch (error) {
-    console.error('로그인 알림 이메일 발송 실패:', error);
+    console.error('❌ 로그인 알림 이메일 발송 실패:', error);
+    console.error('오류 상세:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      status: (error as any)?.status,
+      text: (error as any)?.text,
+      response: (error as any)?.response
+    });
     return false;
   }
 };
