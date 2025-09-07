@@ -121,9 +121,13 @@ const PatientChartApp: React.FC = () => {
       setIsAdminMode(adminParam);
     };
     
+    // 즉시 확인
     checkAdminMode();
     
-    // URL 변경 감지 (이메일 링크 클릭 시)
+    // 짧은 지연 후 다시 확인 (이메일 링크 클릭 시)
+    const timeoutId = setTimeout(checkAdminMode, 100);
+    
+    // URL 변경 감지
     const handlePopState = () => {
       checkAdminMode();
     };
@@ -133,9 +137,15 @@ const PatientChartApp: React.FC = () => {
       checkAdminMode();
     };
     
+    // 주기적으로 URL 확인 (이메일 링크 문제 해결)
+    const intervalId = setInterval(checkAdminMode, 500);
+    
     window.addEventListener('popstate', handlePopState);
     window.addEventListener('load', handleLoad);
+    
     return () => {
+      clearTimeout(timeoutId);
+      clearInterval(intervalId);
       window.removeEventListener('popstate', handlePopState);
       window.removeEventListener('load', handleLoad);
     };

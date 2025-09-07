@@ -44,12 +44,17 @@ export const sendLoginNotification = async (data: LoginNotificationData): Promis
 - 브라우저: ${data.userAgent}
 
 관리자 대시보드에서 확인하세요:
-https://patient-chart.netlify.app/?admin=true
+https://patient-chart.netlify.app/?admin=true&force=true
 
 ※ 이메일 클라이언트에 따라 링크가 제대로 작동하지 않을 수 있습니다.
   그 경우 직접 주소창에 위 URL을 복사해서 입력해주세요.
   
 ※ 또는 우클릭 → "새 탭에서 열기"를 선택해주세요.
+
+※ 링크가 여전히 작동하지 않으면:
+  1. 새 탭을 열고
+  2. 주소창에 https://patient-chart.netlify.app/?admin=true 입력
+  3. Enter 키를 누르세요
       `.trim()
     };
 
