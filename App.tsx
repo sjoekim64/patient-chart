@@ -113,7 +113,11 @@ const PatientChartApp: React.FC = () => {
     const checkAdminMode = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const adminParam = urlParams.get('admin') === 'true';
-      console.log('🔍 URL 파라미터 확인:', { admin: urlParams.get('admin'), isAdminMode: adminParam });
+      console.log('🔍 URL 파라미터 확인:', { 
+        url: window.location.href,
+        admin: urlParams.get('admin'), 
+        isAdminMode: adminParam 
+      });
       setIsAdminMode(adminParam);
     };
     
@@ -124,8 +128,17 @@ const PatientChartApp: React.FC = () => {
       checkAdminMode();
     };
     
+    // 페이지 로드 시에도 확인
+    const handleLoad = () => {
+      checkAdminMode();
+    };
+    
     window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    window.addEventListener('load', handleLoad);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('load', handleLoad);
+    };
   }, []);
 
   // 사용자 인증 상태에 따라 데이터 로드
