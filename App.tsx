@@ -7,7 +7,7 @@ import { PatientList } from './components/PatientList.tsx';
 import { AdminDashboard } from './components/AdminDashboard';
 import type { PatientData } from './types.ts';
 import { database } from './lib/database';
-import { initializeSampleData, getNewPatientSample, getFollowUpPatientSample } from './lib/sampleData';
+import { initializeSampleData, getNewPatientSample, getFollowUpPatientSample, initializeTestUser } from './lib/sampleData';
 
 
 const getNewPatientState = (chartType: 'new' | 'follow-up', clinicInfo?: any): PatientData => {
@@ -125,6 +125,9 @@ const PatientChartApp: React.FC = () => {
     try {
       // 데이터베이스 초기화
       await database.initialize();
+      
+      // 테스트 사용자 초기화 (앱 시작 시 항상 실행)
+      await initializeTestUser();
       
       // 환자 데이터 로드
       const charts = await database.getPatientCharts(user.id);

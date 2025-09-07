@@ -1,4 +1,5 @@
 import type { PatientData } from '../types';
+import type { User } from './database';
 
 // 신규환자 샘플 데이터
 export const getNewPatientSample = (clinicInfo?: any): PatientData => ({
@@ -248,5 +249,51 @@ export const initializeSampleData = async (userId: string, clinicInfo?: any) => 
   } catch (error) {
     console.error('샘플 데이터 초기화 실패:', error);
     return { newSampleAdded: false, followUpSampleAdded: false };
+  }
+};
+
+// 테스트용 사용자 계정 초기화 함수
+export const initializeTestUser = async () => {
+  const { database } = await import('./database');
+  
+  try {
+    // 테스트 사용자 정보
+    const testUserData = {
+      username: 'sjoekim',
+      password: 'Joe007007',
+      clinicName: 'Test Wellness Center',
+      therapistName: '김선생',
+      therapistLicenseNo: 'TEST12345'
+    };
+    
+    // 기존 사용자가 있는지 확인
+    const existingUsers = await database.getAllUsers();
+    const existingUser = existingUsers.find(user => user.username === 'sjoekim');
+    
+    if (!existingUser) {
+      // 테스트 사용자 생성
+      const result = await database.registerUser(testUserData);
+      console.log('테스트 사용자 계정이 생성되었습니다:', result.user.username);
+      
+      // 관리자 승인 처리
+      await database.approveUser(result.user.id, 'admin');
+      console.log('테스트 사용자 계정이 승인되었습니다.');
+      
+      return { userCreated: true, userApproved: true };
+    } else {
+      console.log('테스트 사용자 계정이 이미 존재합니다.');
+      
+      // 승인되지 않은 경우 승인 처리
+      if (!existingUser.isApproved) {
+        await database.approveUser(existingUser.id, 'admin');
+        console.log('테스트 사용자 계정이 승인되었습니다.');
+        return { userCreated: false, userApproved: true };
+      }
+      
+      return { userCreated: false, userApproved: existingUser.isApproved };
+    }
+  } catch (error) {
+    console.error('테스트 사용자 초기화 실패:', error);
+    return { userCreated: false, userApproved: false };
   }
 };
