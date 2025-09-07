@@ -301,9 +301,8 @@ const PatientChartApp: React.FC = () => {
   }
 
   // 관리자 대시보드 모드
-  const adminRoute = <AdminRoute isAuthenticated={isAuthenticated} isAdminMode={isAdminMode} />;
-  if (adminRoute) {
-    return adminRoute;
+  if (isAuthenticated && isAdminMode) {
+    return <AdminRoute isAuthenticated={isAuthenticated} isAdminMode={isAdminMode} />;
   }
 
   return (
