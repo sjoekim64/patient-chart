@@ -107,14 +107,18 @@ const PatientChartApp: React.FC = () => {
   const { user, isAuthenticated, isLoading: authLoading, logout } = useAuth();
   const { isAdminMode, clearAdminMode } = useAdminMode();
 
-  // 로그인 시 자동으로 관리자 대시보드로 이동
+  // 로그인 시 자동으로 관리자 대시보드로 이동 (한 번만 실행)
   useEffect(() => {
-    if (isAuthenticated && user && user.username === 'sjoekim') {
-      console.log('🔑 관리자 로그인 감지 - 관리자 대시보드로 이동');
-      window.history.replaceState({}, '', window.location.pathname + '?admin=true');
-      window.location.reload();
+    if (isAuthenticated && user && user.username === 'sjoekim' && !isAdminMode) {
+      const hasRedirected = localStorage.getItem('adminRedirected');
+      if (!hasRedirected) {
+        console.log('🔑 관리자 로그인 감지 - 관리자 대시보드로 이동');
+        localStorage.setItem('adminRedirected', 'true');
+        window.history.replaceState({}, '', window.location.pathname + '?admin=true');
+        window.location.reload();
+      }
     }
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user, isAdminMode]);
 
   // 사용자 인증 상태에 따라 데이터 로드
   useEffect(() => {
@@ -328,6 +332,7 @@ const PatientChartApp: React.FC = () => {
             <button
               onClick={() => {
                 clearAdminMode();
+                localStorage.removeItem('adminRedirected');
                 logout();
               }}
               className="mt-2 px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
