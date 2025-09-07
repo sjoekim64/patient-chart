@@ -4,7 +4,8 @@ import { AuthWrapper } from './components/AuthWrapper';
 import { PatientForm } from './components/PatientForm.tsx';
 import { PrintableView } from './components/PrintableView.tsx';
 import { PatientList } from './components/PatientList.tsx';
-import { AdminDashboard } from './components/AdminDashboard';
+import { AdminRoute } from './components/AdminRoute';
+import { useAdminMode } from './hooks/useAdminMode';
 import type { PatientData } from './types.ts';
 import { database } from './lib/database';
 import { initializeSampleData, getNewPatientSample, getFollowUpPatientSample, initializeTestUser } from './lib/sampleData';
@@ -104,68 +105,7 @@ const PatientChartApp: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const { user, isAuthenticated, isLoading: authLoading, logout } = useAuth();
-
-  // URL 파라미터 확인 (관리자 대시보드) - 상태로 관리
-  const [isAdminMode, setIsAdminMode] = useState(false);
-
-  // URL 파라미터 확인 (관리자 대시보드)
-  useEffect(() => {
-    const checkAdminMode = () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const adminParam = urlParams.get('admin') === 'true';
-      
-      // URL 파라미터가 있으면 localStorage에 저장
-      if (adminParam) {
-        localStorage.setItem('adminMode', 'true');
-        console.log('💾 관리자 모드 URL 파라미터를 localStorage에 저장');
-      }
-      
-      // localStorage에서 관리자 모드 확인
-      const savedAdminMode = localStorage.getItem('adminMode') === 'true';
-      const finalAdminMode = adminParam || savedAdminMode;
-      
-      console.log('🔍 URL 파라미터 확인:');
-      console.log('  URL:', window.location.href);
-      console.log('  Search:', window.location.search);
-      console.log('  Admin param:', urlParams.get('admin'));
-      console.log('  Saved admin mode:', savedAdminMode);
-      console.log('  Final IsAdminMode:', finalAdminMode);
-      setIsAdminMode(finalAdminMode);
-    };
-    
-    // 즉시 확인
-    checkAdminMode();
-    
-    // 짧은 지연 후 다시 확인 (이메일 링크 클릭 시)
-    const timeoutId1 = setTimeout(checkAdminMode, 100);
-    const timeoutId2 = setTimeout(checkAdminMode, 500);
-    const timeoutId3 = setTimeout(checkAdminMode, 1000);
-    
-    // URL 변경 감지
-    const handlePopState = () => {
-      checkAdminMode();
-    };
-    
-    // 페이지 로드 시에도 확인
-    const handleLoad = () => {
-      checkAdminMode();
-    };
-    
-    // 주기적으로 URL 확인 (이메일 링크 문제 해결)
-    const intervalId = setInterval(checkAdminMode, 1000);
-    
-    window.addEventListener('popstate', handlePopState);
-    window.addEventListener('load', handleLoad);
-    
-    return () => {
-      clearTimeout(timeoutId1);
-      clearTimeout(timeoutId2);
-      clearTimeout(timeoutId3);
-      clearInterval(intervalId);
-      window.removeEventListener('popstate', handlePopState);
-      window.removeEventListener('load', handleLoad);
-    };
-  }, []);
+  const { isAdminMode, clearAdminMode } = useAdminMode();
 
   // 사용자 인증 상태에 따라 데이터 로드
   useEffect(() => {
@@ -361,15 +301,9 @@ const PatientChartApp: React.FC = () => {
   }
 
   // 관리자 대시보드 모드
-  console.log('🔍 렌더링 시점 확인:');
-  console.log('  isAuthenticated:', isAuthenticated);
-  console.log('  isAdminMode:', isAdminMode);
-  console.log('  URL:', window.location.href);
-  console.log('  Search:', window.location.search);
-  
-  if (isAdminMode) {
-    console.log('✅ 관리자 대시보드 렌더링');
-    return <AdminDashboard />;
+  const adminRoute = <AdminRoute isAuthenticated={isAuthenticated} isAdminMode={isAdminMode} />;
+  if (adminRoute) {
+    return adminRoute;
   }
 
   return (
@@ -385,7 +319,7 @@ const PatientChartApp: React.FC = () => {
             <p className="text-xs text-gray-500">{user?.clinicName}</p>
             <button
               onClick={() => {
-                localStorage.removeItem('adminMode');
+                clearAdminMode();
                 logout();
               }}
               className="mt-2 px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
