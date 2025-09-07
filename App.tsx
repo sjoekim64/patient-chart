@@ -107,18 +107,7 @@ const PatientChartApp: React.FC = () => {
   const { user, isAuthenticated, isLoading: authLoading, logout } = useAuth();
   const { isAdminMode, clearAdminMode } = useAdminMode();
 
-  // 로그인 시 자동으로 관리자 대시보드로 이동 (한 번만 실행)
-  useEffect(() => {
-    if (isAuthenticated && user && user.username === 'sjoekim' && !isAdminMode) {
-      const hasRedirected = localStorage.getItem('adminRedirected');
-      if (!hasRedirected) {
-        console.log('🔑 관리자 로그인 감지 - 관리자 대시보드로 이동');
-        localStorage.setItem('adminRedirected', 'true');
-        window.history.replaceState({}, '', window.location.pathname + '?admin=true');
-        window.location.reload();
-      }
-    }
-  }, [isAuthenticated, user, isAdminMode]);
+  // 자동 리다이렉트 로직 제거 - 관리자는 URL 파라미터로만 접근
 
   // 사용자 인증 상태에 따라 데이터 로드
   useEffect(() => {
