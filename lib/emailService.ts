@@ -19,11 +19,13 @@ export interface LoginNotificationData {
 
 export const sendLoginNotification = async (data: LoginNotificationData): Promise<boolean> => {
   try {
+    console.log('🚀 로그인 알림 이메일 발송 시작');
     console.log('=== EmailJS 설정 확인 ===');
     console.log('EMAILJS_SERVICE_ID:', EMAILJS_SERVICE_ID);
     console.log('EMAILJS_TEMPLATE_ID:', EMAILJS_TEMPLATE_ID);
     console.log('EMAILJS_PUBLIC_KEY:', EMAILJS_PUBLIC_KEY ? '설정됨' : '설정되지 않음');
     console.log('========================');
+    console.log('📧 전송할 데이터:', data);
     
     const templateParams = {
       subject: `[환자차트시스템] ${data.username} 로그인 알림`,

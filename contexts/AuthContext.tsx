@@ -86,6 +86,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       });
 
       // 로그인 성공 시 이메일 알림 발송 (비동기로 처리하여 로그인 속도에 영향 없음)
+      console.log('📧 로그인 알림 이메일 발송 시작...');
       sendLoginNotification({
         username: result.user.username,
         clinicName: result.user.clinicName,
@@ -93,8 +94,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         loginTime: new Date().toLocaleString('ko-KR'),
         userAgent: getBrowserInfo(),
         ipAddress: await getClientIP()
+      }).then(success => {
+        console.log('📧 로그인 알림 이메일 발송 결과:', success ? '성공' : '실패');
       }).catch(error => {
-        console.error('로그인 알림 이메일 발송 실패:', error);
+        console.error('❌ 로그인 알림 이메일 발송 실패:', error);
         // 이메일 발송 실패는 로그인에 영향을 주지 않음
       });
       
