@@ -1,9 +1,9 @@
 import emailjs from '@emailjs/browser';
 
 // EmailJS 설정 (환경 변수에서 가져오기)
-const EMAILJS_SERVICE_ID = process.env.EMAILJS_SERVICE_ID || 'service_patient_chart';
-const EMAILJS_TEMPLATE_ID = process.env.EMAILJS_TEMPLATE_ID || 'template_login_notification';
-const EMAILJS_PUBLIC_KEY = process.env.EMAILJS_PUBLIC_KEY || 'your_emailjs_public_key';
+const EMAILJS_SERVICE_ID = process.env.EMAILJS_SERVICE_ID || 'service_1r77etj';
+const EMAILJS_TEMPLATE_ID = process.env.EMAILJS_TEMPLATE_ID || 'template_g0mc9fr';
+const EMAILJS_PUBLIC_KEY = process.env.EMAILJS_PUBLIC_KEY || 'rA7woIdCuPRzaiuAF';
 
 // EmailJS 초기화
 emailjs.init(EMAILJS_PUBLIC_KEY);
@@ -28,9 +28,9 @@ export const sendLoginNotification = async (data: LoginNotificationData): Promis
     const templateParams = {
       to_email: 'stjoe1004@gmail.com',
       to_name: '관리자',
-      username: data.username,
-      clinic_name: data.clinicName,
-      therapist_name: data.therapistName,
+      user_username: data.username,
+      user_clinic_name: data.clinicName,
+      user_therapist_name: data.therapistName,
       login_time: data.loginTime,
       user_agent: data.userAgent,
       ip_address: data.ipAddress || '알 수 없음',
@@ -52,7 +52,7 @@ https://patient-chart.netlify.app/?admin=true
     };
 
     // EmailJS 설정이 제대로 되지 않은 경우 경고
-    if (EMAILJS_PUBLIC_KEY === 'your_emailjs_public_key') {
+    if (!EMAILJS_PUBLIC_KEY || EMAILJS_PUBLIC_KEY === 'your_emailjs_public_key') {
       console.warn('⚠️ EmailJS가 설정되지 않았습니다. .env.local 파일에 EMAILJS_PUBLIC_KEY를 설정해주세요.');
       console.log('📧 로그인 알림 데이터:', data);
       return false;
