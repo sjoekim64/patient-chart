@@ -45,6 +45,8 @@ export const sendLoginNotification = async (data: LoginNotificationData): Promis
 
 관리자 대시보드에서 확인하세요:
 https://patient-chart.netlify.app/?admin=true
+
+※ 링크가 제대로 작동하지 않으면 직접 주소창에 복사해서 입력해주세요.
       `.trim()
     };
 

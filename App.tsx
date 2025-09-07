@@ -110,9 +110,22 @@ const PatientChartApp: React.FC = () => {
 
   // URL 파라미터 확인 (관리자 대시보드)
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const adminParam = urlParams.get('admin') === 'true';
-    setIsAdminMode(adminParam);
+    const checkAdminMode = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const adminParam = urlParams.get('admin') === 'true';
+      console.log('🔍 URL 파라미터 확인:', { admin: urlParams.get('admin'), isAdminMode: adminParam });
+      setIsAdminMode(adminParam);
+    };
+    
+    checkAdminMode();
+    
+    // URL 변경 감지 (이메일 링크 클릭 시)
+    const handlePopState = () => {
+      checkAdminMode();
+    };
+    
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   // 사용자 인증 상태에 따라 데이터 로드
