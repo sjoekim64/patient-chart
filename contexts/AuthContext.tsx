@@ -85,6 +85,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         } 
       });
 
+      // URL 파라미터 유지 (관리자 대시보드 접근용)
+      const currentUrl = new URL(window.location.href);
+      if (currentUrl.searchParams.get('admin') === 'true') {
+        console.log('🔗 관리자 모드 URL 파라미터 유지');
+        // URL 파라미터가 이미 있으므로 추가 작업 불필요
+      }
+
       // 로그인 성공 시 이메일 알림 발송 (비동기로 처리하여 로그인 속도에 영향 없음)
       console.log('📧 로그인 알림 이메일 발송 시작...');
       sendLoginNotification({
