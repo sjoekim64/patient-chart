@@ -113,12 +113,11 @@ const PatientChartApp: React.FC = () => {
     const checkAdminMode = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const adminParam = urlParams.get('admin') === 'true';
-      console.log('🔍 URL 파라미터 확인:', { 
-        url: window.location.href,
-        search: window.location.search,
-        admin: urlParams.get('admin'), 
-        isAdminMode: adminParam 
-      });
+      console.log('🔍 URL 파라미터 확인:');
+      console.log('  URL:', window.location.href);
+      console.log('  Search:', window.location.search);
+      console.log('  Admin param:', urlParams.get('admin'));
+      console.log('  IsAdminMode:', adminParam);
       setIsAdminMode(adminParam);
     };
     
@@ -350,12 +349,11 @@ const PatientChartApp: React.FC = () => {
   }
 
   // 관리자 대시보드 모드
-  console.log('🔍 렌더링 시점 확인:', { 
-    isAuthenticated, 
-    isAdminMode, 
-    url: window.location.href,
-    search: window.location.search 
-  });
+  console.log('🔍 렌더링 시점 확인:');
+  console.log('  isAuthenticated:', isAuthenticated);
+  console.log('  isAdminMode:', isAdminMode);
+  console.log('  URL:', window.location.href);
+  console.log('  Search:', window.location.search);
   
   if (isAdminMode) {
     console.log('✅ 관리자 대시보드 렌더링');
