@@ -115,6 +115,7 @@ const PatientChartApp: React.FC = () => {
       const adminParam = urlParams.get('admin') === 'true';
       console.log('🔍 URL 파라미터 확인:', { 
         url: window.location.href,
+        search: window.location.search,
         admin: urlParams.get('admin'), 
         isAdminMode: adminParam 
       });
@@ -125,7 +126,9 @@ const PatientChartApp: React.FC = () => {
     checkAdminMode();
     
     // 짧은 지연 후 다시 확인 (이메일 링크 클릭 시)
-    const timeoutId = setTimeout(checkAdminMode, 100);
+    const timeoutId1 = setTimeout(checkAdminMode, 100);
+    const timeoutId2 = setTimeout(checkAdminMode, 500);
+    const timeoutId3 = setTimeout(checkAdminMode, 1000);
     
     // URL 변경 감지
     const handlePopState = () => {
@@ -138,13 +141,15 @@ const PatientChartApp: React.FC = () => {
     };
     
     // 주기적으로 URL 확인 (이메일 링크 문제 해결)
-    const intervalId = setInterval(checkAdminMode, 500);
+    const intervalId = setInterval(checkAdminMode, 1000);
     
     window.addEventListener('popstate', handlePopState);
     window.addEventListener('load', handleLoad);
     
     return () => {
-      clearTimeout(timeoutId);
+      clearTimeout(timeoutId1);
+      clearTimeout(timeoutId2);
+      clearTimeout(timeoutId3);
       clearInterval(intervalId);
       window.removeEventListener('popstate', handlePopState);
       window.removeEventListener('load', handleLoad);
@@ -345,7 +350,15 @@ const PatientChartApp: React.FC = () => {
   }
 
   // 관리자 대시보드 모드
+  console.log('🔍 렌더링 시점 확인:', { 
+    isAuthenticated, 
+    isAdminMode, 
+    url: window.location.href,
+    search: window.location.search 
+  });
+  
   if (isAdminMode) {
+    console.log('✅ 관리자 대시보드 렌더링');
     return <AdminDashboard />;
   }
 
