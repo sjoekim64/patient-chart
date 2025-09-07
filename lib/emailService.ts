@@ -44,17 +44,18 @@ export const sendLoginNotification = async (data: LoginNotificationData): Promis
 - 브라우저: ${data.userAgent}
 
 관리자 대시보드에서 확인하세요:
-https://patient-chart.netlify.app/?admin=true&force=true
 
-※ 이메일 클라이언트에 따라 링크가 제대로 작동하지 않을 수 있습니다.
-  그 경우 직접 주소창에 위 URL을 복사해서 입력해주세요.
-  
-※ 또는 우클릭 → "새 탭에서 열기"를 선택해주세요.
+🔗 관리자 대시보드 링크:
+https://patient-chart.netlify.app/?admin=true
 
-※ 링크가 여전히 작동하지 않으면:
-  1. 새 탭을 열고
-  2. 주소창에 https://patient-chart.netlify.app/?admin=true 입력
-  3. Enter 키를 누르세요
+📋 사용 방법:
+1. 위 링크를 복사하세요
+2. 새 탭을 열고 주소창에 붙여넣기
+3. Enter 키를 누르세요
+4. 로그인: sjoekim / Joe007007
+
+⚠️ 이메일에서 직접 클릭하면 작동하지 않을 수 있습니다.
+   반드시 링크를 복사해서 새 탭에서 열어주세요.
       `.trim()
     };
 
