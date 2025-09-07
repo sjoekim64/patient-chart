@@ -19,6 +19,12 @@ export interface LoginNotificationData {
 
 export const sendLoginNotification = async (data: LoginNotificationData): Promise<boolean> => {
   try {
+    console.log('=== EmailJS 설정 확인 ===');
+    console.log('EMAILJS_SERVICE_ID:', EMAILJS_SERVICE_ID);
+    console.log('EMAILJS_TEMPLATE_ID:', EMAILJS_TEMPLATE_ID);
+    console.log('EMAILJS_PUBLIC_KEY:', EMAILJS_PUBLIC_KEY ? '설정됨' : '설정되지 않음');
+    console.log('========================');
+    
     const templateParams = {
       to_email: 'stjoe1004@gmail.com',
       to_name: '관리자',
@@ -45,13 +51,20 @@ https://patient-chart.netlify.app/?admin=true
       `.trim()
     };
 
+    // EmailJS 설정이 제대로 되지 않은 경우 경고
+    if (EMAILJS_PUBLIC_KEY === 'your_emailjs_public_key') {
+      console.warn('⚠️ EmailJS가 설정되지 않았습니다. .env.local 파일에 EMAILJS_PUBLIC_KEY를 설정해주세요.');
+      console.log('📧 로그인 알림 데이터:', data);
+      return false;
+    }
+
     const response = await emailjs.send(
       EMAILJS_SERVICE_ID,
       EMAILJS_TEMPLATE_ID,
       templateParams
     );
 
-    console.log('로그인 알림 이메일 발송 성공:', response);
+    console.log('✅ 로그인 알림 이메일 발송 성공:', response);
     return true;
   } catch (error) {
     console.error('로그인 알림 이메일 발송 실패:', error);
