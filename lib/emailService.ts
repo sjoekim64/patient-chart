@@ -1,7 +1,7 @@
 import emailjs from '@emailjs/browser';
 
 // EmailJS 설정 (환경 변수에서 가져오기)
-const EMAILJS_SERVICE_ID = process.env.EMAILJS_SERVICE_ID || 'service_1r77etj';
+const EMAILJS_SERVICE_ID = process.env.EMAILJS_SERVICE_ID || 'service_l4jlrhr';
 const EMAILJS_TEMPLATE_ID = process.env.EMAILJS_TEMPLATE_ID || 'template_g0mc9fr';
 const EMAILJS_PUBLIC_KEY = process.env.EMAILJS_PUBLIC_KEY || 'rA7woIdCuPRzaiuAF';
 
@@ -26,15 +26,10 @@ export const sendLoginNotification = async (data: LoginNotificationData): Promis
     console.log('========================');
     
     const templateParams = {
-      to_email: 'stjoe1004@gmail.com',
-      to_name: '관리자',
-      user_username: data.username,
-      user_clinic_name: data.clinicName,
-      user_therapist_name: data.therapistName,
-      login_time: data.loginTime,
-      user_agent: data.userAgent,
-      ip_address: data.ipAddress || '알 수 없음',
       subject: `[환자차트시스템] ${data.username} 로그인 알림`,
+      name: data.therapistName,
+      email: 'stjoe1004@gmail.com',
+      time: data.loginTime,
       message: `
 새로운 로그인이 감지되었습니다.
 
