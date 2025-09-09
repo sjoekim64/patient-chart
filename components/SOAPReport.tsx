@@ -116,160 +116,172 @@ export const SOAPReport: React.FC<SOAPReportProps> = ({ data, onClose }) => {
               </div>
             </div>
 
-            {/* SOAP Format */}
+            {/* Narrative SOAP Format */}
             <div className="space-y-6">
               {/* Subjective */}
               <div className="border-l-4 border-blue-500 pl-4">
                 <h2 className="text-lg font-bold text-blue-700 mb-3">S - Subjective</h2>
-                <div className="space-y-3">
-                  <div>
-                    <h3 className="font-semibold text-gray-700">Chief Complaint:</h3>
-                    <p className="text-gray-600 ml-4">
-                      {hipaaData.chiefComplaint.selectedComplaints.join(', ')}
-                      {hipaaData.chiefComplaint.otherComplaint && `, ${hipaaData.chiefComplaint.otherComplaint}`}
+                <div className="text-gray-700 leading-relaxed">
+                  <p className="mb-3">
+                    환자는 <strong>{hipaaData.chiefComplaint.selectedComplaints.join(', ')}{hipaaData.chiefComplaint.otherComplaint && `, ${hipaaData.chiefComplaint.otherComplaint}`}</strong>을(를) 주증상으로 호소합니다.
+                    {hipaaData.chiefComplaint.location && ` 증상은 주로 ${hipaaData.chiefComplaint.location}에 국한되어 있으며,`}
+                    {hipaaData.chiefComplaint.onsetValue && hipaaData.chiefComplaint.onsetUnit && ` 약 ${hipaaData.chiefComplaint.onsetValue} ${hipaaData.chiefComplaint.onsetUnit} 전부터 시작되었습니다.`}
+                  </p>
+                  
+                  {hipaaData.chiefComplaint.severityScore && (
+                    <p className="mb-3">
+                      통증의 강도는 10점 척도에서 <strong>{hipaaData.chiefComplaint.severityScore}점</strong>으로 평가되며, 
+                      {hipaaData.chiefComplaint.severityDescription && ` ${hipaaData.chiefComplaint.severityDescription}한 상태입니다.`}
                     </p>
-                  </div>
+                  )}
                   
-                  <div>
-                    <h3 className="font-semibold text-gray-700">Location:</h3>
-                    <p className="text-gray-600 ml-4">{hipaaData.chiefComplaint.location}</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-semibold text-gray-700">Onset:</h3>
-                    <p className="text-gray-600 ml-4">
-                      {hipaaData.chiefComplaint.onsetValue} {hipaaData.chiefComplaint.onsetUnit}
+                  {hipaaData.chiefComplaint.presentIllness && (
+                    <p className="mb-3">
+                      <strong>현재 병력:</strong> {hipaaData.chiefComplaint.presentIllness}
                     </p>
-                  </div>
+                  )}
                   
-                  <div>
-                    <h3 className="font-semibold text-gray-700">Severity:</h3>
-                    <p className="text-gray-600 ml-4">
-                      {hipaaData.chiefComplaint.severityScore}/10 - {hipaaData.chiefComplaint.severityDescription}
+                  {hipaaData.chiefComplaint.provocation.length > 0 && (
+                    <p className="mb-3">
+                      증상이 악화되는 상황: {hipaaData.chiefComplaint.provocation.join(', ')}
+                      {hipaaData.chiefComplaint.provocationOther && `, ${hipaaData.chiefComplaint.provocationOther}`}
                     </p>
-                  </div>
+                  )}
                   
-                  <div>
-                    <h3 className="font-semibold text-gray-700">Present Illness:</h3>
-                    <p className="text-gray-600 ml-4">{hipaaData.chiefComplaint.presentIllness}</p>
-                  </div>
+                  {hipaaData.chiefComplaint.palliation.length > 0 && (
+                    <p className="mb-3">
+                      증상이 완화되는 요인: {hipaaData.chiefComplaint.palliation.join(', ')}
+                      {hipaaData.chiefComplaint.palliationOther && `, ${hipaaData.chiefComplaint.palliationOther}`}
+                    </p>
+                  )}
+                  
+                  {hipaaData.chiefComplaint.quality.length > 0 && (
+                    <p className="mb-3">
+                      증상의 성질: {hipaaData.chiefComplaint.quality.join(', ')}
+                      {hipaaData.chiefComplaint.qualityOther && `, ${hipaaData.chiefComplaint.qualityOther}`}
+                    </p>
+                  )}
                 </div>
               </div>
 
               {/* Objective */}
               <div className="border-l-4 border-green-500 pl-4">
                 <h2 className="text-lg font-bold text-green-700 mb-3">O - Objective</h2>
-                <div className="space-y-3">
-                  <div>
-                    <h3 className="font-semibold text-gray-700">Vital Signs:</h3>
-                    <div className="grid grid-cols-2 gap-4 ml-4 text-sm">
-                      <p><strong>Height:</strong> {hipaaData.vitalSigns.heightFt}'{hipaaData.vitalSigns.heightIn}"</p>
-                      <p><strong>Weight:</strong> {hipaaData.vitalSigns.weight} lbs</p>
-                      <p><strong>Temperature:</strong> {hipaaData.vitalSigns.temp}°F</p>
-                      <p><strong>Blood Pressure:</strong> {hipaaData.vitalSigns.bpSystolic}/{hipaaData.vitalSigns.bpDiastolic}</p>
-                      <p><strong>Heart Rate:</strong> {hipaaData.vitalSigns.heartRate} bpm</p>
-                      <p><strong>Heart Rhythm:</strong> {hipaaData.vitalSigns.heartRhythm}</p>
-                      <p><strong>Respiratory Rate:</strong> {hipaaData.vitalSigns.lungRate}/min</p>
-                      <p><strong>Lung Sounds:</strong> {hipaaData.vitalSigns.lungSound}</p>
-                    </div>
-                  </div>
+                <div className="text-gray-700 leading-relaxed">
+                  <p className="mb-3">
+                    <strong>신체 측정:</strong> 
+                    {hipaaData.vitalSigns.heightFt && hipaaData.vitalSigns.heightIn && ` 신장 ${hipaaData.vitalSigns.heightFt}피트 ${hipaaData.vitalSigns.heightIn}인치,`}
+                    {hipaaData.vitalSigns.weight && ` 체중 ${hipaaData.vitalSigns.weight}파운드,`}
+                    {hipaaData.vitalSigns.temp && ` 체온 ${hipaaData.vitalSigns.temp}°F,`}
+                    {hipaaData.vitalSigns.bpSystolic && hipaaData.vitalSigns.bpDiastolic && ` 혈압 ${hipaaData.vitalSigns.bpSystolic}/${hipaaData.vitalSigns.bpDiastolic}mmHg,`}
+                    {hipaaData.vitalSigns.heartRate && ` 심박수 ${hipaaData.vitalSigns.heartRate}회/분,`}
+                    {hipaaData.vitalSigns.heartRhythm && ` 심박 리듬 ${hipaaData.vitalSigns.heartRhythm},`}
+                    {hipaaData.vitalSigns.lungRate && ` 호흡수 ${hipaaData.vitalSigns.lungRate}회/분,`}
+                    {hipaaData.vitalSigns.lungSound && ` 폐음 ${hipaaData.vitalSigns.lungSound}로 측정되었습니다.`}
+                  </p>
                   
-                  <div>
-                    <h3 className="font-semibold text-gray-700">Tongue Examination:</h3>
-                    <p className="text-gray-600 ml-4">
-                      Body: {hipaaData.tongue.body.color} {hipaaData.tongue.body.shape} | 
-                      Coating: {hipaaData.tongue.coating.color} {hipaaData.tongue.coating.quality.join(', ')}
-                    </p>
-                  </div>
+                  <p className="mb-3">
+                    <strong>설진:</strong> 
+                    {hipaaData.tongue.body.color && ` 설체는 ${hipaaData.tongue.body.color}색이며 ${hipaaData.tongue.body.shape}한 형태를 보입니다.`}
+                    {hipaaData.tongue.coating.color && ` 설태는 ${hipaaData.tongue.coating.color}색으로 ${hipaaData.tongue.coating.quality.join(', ')}한 상태입니다.`}
+                    {hipaaData.tongue.coating.notes && ` ${hipaaData.tongue.coating.notes}`}
+                  </p>
                   
-                  <div>
-                    <h3 className="font-semibold text-gray-700">Pulse Examination:</h3>
-                    <p className="text-gray-600 ml-4">
-                      {hipaaData.pulse.overall.join(', ')} | {hipaaData.pulse.notes}
-                    </p>
-                  </div>
+                  <p className="mb-3">
+                    <strong>맥진:</strong> 
+                    {hipaaData.pulse.overall.length > 0 && ` 맥상은 ${hipaaData.pulse.overall.join(', ')}으로 나타났습니다.`}
+                    {hipaaData.pulse.notes && ` ${hipaaData.pulse.notes}`}
+                  </p>
                 </div>
               </div>
 
               {/* Assessment */}
               <div className="border-l-4 border-yellow-500 pl-4">
                 <h2 className="text-lg font-bold text-yellow-700 mb-3">A - Assessment</h2>
-                <div className="space-y-3">
-                  <div>
-                    <h3 className="font-semibold text-gray-700">TCM Diagnosis:</h3>
-                    <p className="text-gray-600 ml-4">{hipaaData.diagnosisAndTreatment.tcmDiagnosis}</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-semibold text-gray-700">Eight Principles:</h3>
-                    <p className="text-gray-600 ml-4">
-                      {hipaaData.diagnosisAndTreatment.eightPrinciples.exteriorInterior} | 
-                      {hipaaData.diagnosisAndTreatment.eightPrinciples.heatCold} | 
-                      {hipaaData.diagnosisAndTreatment.eightPrinciples.excessDeficient} | 
-                      {hipaaData.diagnosisAndTreatment.eightPrinciples.yangYin}
+                <div className="text-gray-700 leading-relaxed">
+                  {hipaaData.diagnosisAndTreatment.tcmDiagnosis && (
+                    <p className="mb-3">
+                      <strong>한의학 진단:</strong> {hipaaData.diagnosisAndTreatment.tcmDiagnosis}
                     </p>
-                  </div>
+                  )}
                   
-                  <div>
-                    <h3 className="font-semibold text-gray-700">Etiology:</h3>
-                    <p className="text-gray-600 ml-4">{hipaaData.diagnosisAndTreatment.etiology}</p>
-                  </div>
+                  {(hipaaData.diagnosisAndTreatment.eightPrinciples.exteriorInterior || 
+                    hipaaData.diagnosisAndTreatment.eightPrinciples.heatCold || 
+                    hipaaData.diagnosisAndTreatment.eightPrinciples.excessDeficient || 
+                    hipaaData.diagnosisAndTreatment.eightPrinciples.yangYin) && (
+                    <p className="mb-3">
+                      <strong>팔강 변증:</strong> 
+                      {hipaaData.diagnosisAndTreatment.eightPrinciples.exteriorInterior && ` 표리에서는 ${hipaaData.diagnosisAndTreatment.eightPrinciples.exteriorInterior},`}
+                      {hipaaData.diagnosisAndTreatment.eightPrinciples.heatCold && ` 한열에서는 ${hipaaData.diagnosisAndTreatment.eightPrinciples.heatCold},`}
+                      {hipaaData.diagnosisAndTreatment.eightPrinciples.excessDeficient && ` 허실에서는 ${hipaaData.diagnosisAndTreatment.eightPrinciples.excessDeficient},`}
+                      {hipaaData.diagnosisAndTreatment.eightPrinciples.yangYin && ` 음양에서는 ${hipaaData.diagnosisAndTreatment.eightPrinciples.yangYin}으로 판단됩니다.`}
+                    </p>
+                  )}
                   
-                  <div>
-                    <h3 className="font-semibold text-gray-700">Western Medical Diagnosis:</h3>
-                    <p className="text-gray-600 ml-4">{hipaaData.chiefComplaint.westernMedicalDiagnosis}</p>
-                  </div>
+                  {hipaaData.diagnosisAndTreatment.etiology && (
+                    <p className="mb-3">
+                      <strong>병인:</strong> {hipaaData.diagnosisAndTreatment.etiology}
+                    </p>
+                  )}
+                  
+                  {hipaaData.chiefComplaint.westernMedicalDiagnosis && (
+                    <p className="mb-3">
+                      <strong>서양의학 진단:</strong> {hipaaData.chiefComplaint.westernMedicalDiagnosis}
+                    </p>
+                  )}
                 </div>
               </div>
 
               {/* Plan */}
               <div className="border-l-4 border-red-500 pl-4">
                 <h2 className="text-lg font-bold text-red-700 mb-3">P - Plan</h2>
-                <div className="space-y-3">
-                  <div>
-                    <h3 className="font-semibold text-gray-700">Treatment Principle:</h3>
-                    <p className="text-gray-600 ml-4">{hipaaData.diagnosisAndTreatment.treatmentPrinciple}</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-semibold text-gray-700">Acupuncture Method:</h3>
-                    <p className="text-gray-600 ml-4">
-                      {hipaaData.diagnosisAndTreatment.acupunctureMethod.join(', ')}
-                      {hipaaData.diagnosisAndTreatment.acupunctureMethodOther && `, ${hipaaData.diagnosisAndTreatment.acupunctureMethodOther}`}
+                <div className="text-gray-700 leading-relaxed">
+                  {hipaaData.diagnosisAndTreatment.treatmentPrinciple && (
+                    <p className="mb-3">
+                      <strong>치료 원칙:</strong> {hipaaData.diagnosisAndTreatment.treatmentPrinciple}
                     </p>
-                  </div>
+                  )}
                   
-                  <div>
-                    <h3 className="font-semibold text-gray-700">Acupuncture Points:</h3>
-                    <p className="text-gray-600 ml-4">{hipaaData.diagnosisAndTreatment.acupuncturePoints}</p>
-                  </div>
+                  {(hipaaData.diagnosisAndTreatment.acupunctureMethod.length > 0 || hipaaData.diagnosisAndTreatment.acupunctureMethodOther) && (
+                    <p className="mb-3">
+                      <strong>침구 치료:</strong> 
+                      {hipaaData.diagnosisAndTreatment.acupunctureMethod.length > 0 && ` ${hipaaData.diagnosisAndTreatment.acupunctureMethod.join(', ')} 방법을 사용하며,`}
+                      {hipaaData.diagnosisAndTreatment.acupunctureMethodOther && ` ${hipaaData.diagnosisAndTreatment.acupunctureMethodOther} 방법도 병행합니다.`}
+                    </p>
+                  )}
                   
-                  <div>
-                    <h3 className="font-semibold text-gray-700">Herbal Treatment:</h3>
-                    <p className="text-gray-600 ml-4">{hipaaData.diagnosisAndTreatment.herbalTreatment}</p>
-                  </div>
+                  {hipaaData.diagnosisAndTreatment.acupuncturePoints && (
+                    <p className="mb-3">
+                      <strong>침구 혈위:</strong> {hipaaData.diagnosisAndTreatment.acupuncturePoints}
+                    </p>
+                  )}
                   
-                  <div>
-                    <h3 className="font-semibold text-gray-700">Other Treatment:</h3>
-                    <p className="text-gray-600 ml-4">
-                      {hipaaData.diagnosisAndTreatment.selectedTreatment}
+                  {hipaaData.diagnosisAndTreatment.herbalTreatment && (
+                    <p className="mb-3">
+                      <strong>한약 치료:</strong> {hipaaData.diagnosisAndTreatment.herbalTreatment}
+                    </p>
+                  )}
+                  
+                  {(hipaaData.diagnosisAndTreatment.selectedTreatment !== 'None' || hipaaData.diagnosisAndTreatment.otherTreatmentText) && (
+                    <p className="mb-3">
+                      <strong>기타 치료:</strong> 
+                      {hipaaData.diagnosisAndTreatment.selectedTreatment !== 'None' && ` ${hipaaData.diagnosisAndTreatment.selectedTreatment}`}
                       {hipaaData.diagnosisAndTreatment.otherTreatmentText && ` - ${hipaaData.diagnosisAndTreatment.otherTreatmentText}`}
                     </p>
-                  </div>
+                  )}
                   
-                  <div>
-                    <h3 className="font-semibold text-gray-700">CPT Codes:</h3>
-                    <p className="text-gray-600 ml-4">{hipaaData.diagnosisAndTreatment.cpt}</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-semibold text-gray-700">Response to Care:</h3>
-                    <p className="text-gray-600 ml-4">
-                      Status: {hipaaData.respondToCare.status}
-                      {hipaaData.respondToCare.improvedDays && ` (${hipaaData.respondToCare.improvedDays} days)`}
-                      {hipaaData.respondToCare.notes && ` - ${hipaaData.respondToCare.notes}`}
+                  {hipaaData.diagnosisAndTreatment.cpt && (
+                    <p className="mb-3">
+                      <strong>CPT 코드:</strong> {hipaaData.diagnosisAndTreatment.cpt}
                     </p>
-                  </div>
+                  )}
+                  
+                  <p className="mb-3">
+                    <strong>치료 반응:</strong> 
+                    {hipaaData.respondToCare.status && ` 현재 상태는 ${hipaaData.respondToCare.status}이며,`}
+                    {hipaaData.respondToCare.improvedDays && ` ${hipaaData.respondToCare.improvedDays}일간의 치료를 통해 개선되었습니다.`}
+                    {hipaaData.respondToCare.notes && ` ${hipaaData.respondToCare.notes}`}
+                  </p>
                 </div>
               </div>
             </div>
