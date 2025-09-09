@@ -4,6 +4,7 @@ import { AuthWrapper } from './components/AuthWrapper';
 import { PatientForm } from './components/PatientForm.tsx';
 import { PrintableView } from './components/PrintableView.tsx';
 import { PatientList } from './components/PatientList.tsx';
+import { SOAPReport } from './components/SOAPReport';
 import { AdminRoute } from './components/AdminRoute';
 import { useAdminMode } from './hooks/useAdminMode';
 import type { PatientData } from './types.ts';
@@ -99,10 +100,11 @@ const getNewPatientState = (chartType: 'new' | 'follow-up', clinicInfo?: any): P
 const PatientChartApp: React.FC = () => {
   const [patients, setPatients] = useState<PatientData[]>([]);
   const [currentPatient, setCurrentPatient] = useState<PatientData | null>(null);
-  const [view, setView] = useState<'list' | 'form' | 'print'>('list');
+  const [view, setView] = useState<'list' | 'form' | 'print' | 'soap'>('list');
   const [formMode, setFormMode] = useState<'new' | 'edit'>('new');
   const [clinicInfo, setClinicInfo] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showSOAPReport, setShowSOAPReport] = useState(false);
 
   const { user, isAuthenticated, isLoading: authLoading, logout } = useAuth();
   const { isAdminMode, clearAdminMode } = useAdminMode();
@@ -263,6 +265,16 @@ const PatientChartApp: React.FC = () => {
     setView('form');
   };
 
+  const handleSOAPReport = (patient: PatientData) => {
+    setCurrentPatient(patient);
+    setShowSOAPReport(true);
+  };
+
+  const handleCloseSOAPReport = () => {
+    setShowSOAPReport(false);
+    setCurrentPatient(null);
+  };
+
   const renderView = () => {
     switch (view) {
       case 'form':
@@ -281,7 +293,8 @@ const PatientChartApp: React.FC = () => {
                     onSelectPatient={handleSelectPatient} 
                     onNewPatient={handleNewPatient} 
                     onDeletePatient={handleDeletePatient} 
-                    onStartFollowUp={handleNewFollowUpChart} 
+                    onStartFollowUp={handleNewFollowUpChart}
+                    onSOAPReport={handleSOAPReport}
                 />;
     }
   };
@@ -335,6 +348,14 @@ const PatientChartApp: React.FC = () => {
       <main>
         {renderView()}
       </main>
+      
+      {/* SOAP Report Modal */}
+      {showSOAPReport && currentPatient && (
+        <SOAPReport 
+          data={currentPatient} 
+          onClose={handleCloseSOAPReport} 
+        />
+      )}
     </div>
   );
 };

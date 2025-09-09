@@ -8,9 +8,10 @@ interface PatientListProps {
   onNewPatient: () => void;
   onStartFollowUp: () => void;
   onDeletePatient: (fileNo: string) => void;
+  onSOAPReport: (patient: PatientData) => void;
 }
 
-export const PatientList: React.FC<PatientListProps> = ({ patients, onSelectPatient, onNewPatient, onStartFollowUp, onDeletePatient }) => {
+export const PatientList: React.FC<PatientListProps> = ({ patients, onSelectPatient, onNewPatient, onStartFollowUp, onDeletePatient, onSOAPReport }) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg max-w-4xl mx-auto">
       <div className="border-b pb-4 mb-6 text-center">
@@ -47,6 +48,12 @@ export const PatientList: React.FC<PatientListProps> = ({ patients, onSelectPati
                   className="px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition-colors duration-200 text-sm"
                 >
                   View / Edit
+                </button>
+                <button
+                  onClick={() => onSOAPReport(patient)}
+                  className="px-4 py-2 bg-blue-100 text-blue-700 font-semibold rounded-lg hover:bg-blue-200 transition-colors duration-200 text-sm"
+                >
+                  SOAP Report
                 </button>
                 <button
                   onClick={(e) => {
