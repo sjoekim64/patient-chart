@@ -54,8 +54,8 @@ export const SOAPReport: React.FC<SOAPReportProps> = ({ data, onClose }) => {
 
   const generateFileName = () => {
     const date = new Date(data.date).toISOString().split('T')[0];
-    const chartType = data.chartType === 'new' ? 'New' : 'FollowUp';
-    return `SOAP_Report_${chartType}_${data.fileNo}_${date}.pdf`;
+    const chartType = data.chartType === 'new' ? 'Initial' : 'FollowUp';
+    return `SOAP_Clinical_Report_${chartType}_${data.fileNo}_${date}.pdf`;
   };
 
   const downloadPDF = () => {
@@ -91,13 +91,13 @@ export const SOAPReport: React.FC<SOAPReportProps> = ({ data, onClose }) => {
               onClick={downloadPDF}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              PDF 다운로드
+              Download PDF
             </button>
             <button
               onClick={onClose}
               className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
             >
-              닫기
+              Close
             </button>
           </div>
         </div>
@@ -106,13 +106,13 @@ export const SOAPReport: React.FC<SOAPReportProps> = ({ data, onClose }) => {
           <div id="soap-report-content" className="p-6 bg-white">
             {/* Header */}
             <div className="text-center mb-6 border-b pb-4">
-              <h1 className="text-2xl font-bold text-gray-800 mb-2">SOAP Report</h1>
+              <h1 className="text-2xl font-bold text-gray-800 mb-2">SOAP Clinical Report</h1>
               <div className="text-sm text-gray-600 space-y-1">
-                <p><strong>File No:</strong> {hipaaData.fileNo}</p>
-                <p><strong>Date:</strong> {formatDate(hipaaData.date)}</p>
-                <p><strong>Chart Type:</strong> {hipaaData.chartType === 'new' ? 'New Patient' : 'Follow-up'}</p>
-                <p><strong>Clinic:</strong> {hipaaData.clinicName}</p>
-                <p><strong>Therapist:</strong> {hipaaData.therapistName} (License: {hipaaData.therapistLicNo})</p>
+                <p><strong>Patient File No:</strong> {hipaaData.fileNo}</p>
+                <p><strong>Date of Service:</strong> {formatDate(hipaaData.date)}</p>
+                <p><strong>Visit Type:</strong> {hipaaData.chartType === 'new' ? 'Initial Consultation' : 'Follow-up Treatment'}</p>
+                <p><strong>Provider:</strong> {hipaaData.clinicName}</p>
+                <p><strong>Licensed Acupuncturist:</strong> {hipaaData.therapistName} (License #: {hipaaData.therapistLicNo})</p>
               </div>
             </div>
 
@@ -120,45 +120,57 @@ export const SOAPReport: React.FC<SOAPReportProps> = ({ data, onClose }) => {
             <div className="space-y-6">
               {/* Subjective */}
               <div className="border-l-4 border-blue-500 pl-4">
-                <h2 className="text-lg font-bold text-blue-700 mb-3">S - Subjective</h2>
+                <h2 className="text-lg font-bold text-blue-700 mb-3">S - SUBJECTIVE</h2>
                 <div className="text-gray-700 leading-relaxed">
                   <p className="mb-3">
-                    환자는 <strong>{hipaaData.chiefComplaint.selectedComplaints.join(', ')}{hipaaData.chiefComplaint.otherComplaint && `, ${hipaaData.chiefComplaint.otherComplaint}`}</strong>을(를) 주증상으로 호소합니다.
-                    {hipaaData.chiefComplaint.location && ` 증상은 주로 ${hipaaData.chiefComplaint.location}에 국한되어 있으며,`}
-                    {hipaaData.chiefComplaint.onsetValue && hipaaData.chiefComplaint.onsetUnit && ` 약 ${hipaaData.chiefComplaint.onsetValue} ${hipaaData.chiefComplaint.onsetUnit} 전부터 시작되었습니다.`}
+                    The patient presents with a chief complaint of <strong>{hipaaData.chiefComplaint.selectedComplaints.join(', ')}{hipaaData.chiefComplaint.otherComplaint && `, ${hipaaData.chiefComplaint.otherComplaint}`}</strong>.
+                    {hipaaData.chiefComplaint.location && ` The symptoms are primarily localized to the ${hipaaData.chiefComplaint.location} region,`}
+                    {hipaaData.chiefComplaint.onsetValue && hipaaData.chiefComplaint.onsetUnit && ` with onset approximately ${hipaaData.chiefComplaint.onsetValue} ${hipaaData.chiefComplaint.onsetUnit} ago.`}
                   </p>
                   
                   {hipaaData.chiefComplaint.severityScore && (
                     <p className="mb-3">
-                      통증의 강도는 10점 척도에서 <strong>{hipaaData.chiefComplaint.severityScore}점</strong>으로 평가되며, 
-                      {hipaaData.chiefComplaint.severityDescription && ` ${hipaaData.chiefComplaint.severityDescription}한 상태입니다.`}
+                      Pain intensity is rated at <strong>{hipaaData.chiefComplaint.severityScore}/10</strong> on a numeric pain scale, 
+                      {hipaaData.chiefComplaint.severityDescription && ` described as ${hipaaData.chiefComplaint.severityDescription}.`}
                     </p>
                   )}
                   
                   {hipaaData.chiefComplaint.presentIllness && (
                     <p className="mb-3">
-                      <strong>현재 병력:</strong> {hipaaData.chiefComplaint.presentIllness}
+                      <strong>History of Present Illness:</strong> {hipaaData.chiefComplaint.presentIllness}
                     </p>
                   )}
                   
                   {hipaaData.chiefComplaint.provocation.length > 0 && (
                     <p className="mb-3">
-                      증상이 악화되는 상황: {hipaaData.chiefComplaint.provocation.join(', ')}
-                      {hipaaData.chiefComplaint.provocationOther && `, ${hipaaData.chiefComplaint.provocationOther}`}
+                      <strong>Aggravating Factors:</strong> Symptoms are exacerbated by {hipaaData.chiefComplaint.provocation.join(', ')}
+                      {hipaaData.chiefComplaint.provocationOther && `, ${hipaaData.chiefComplaint.provocationOther}`}.
                     </p>
                   )}
                   
                   {hipaaData.chiefComplaint.palliation.length > 0 && (
                     <p className="mb-3">
-                      증상이 완화되는 요인: {hipaaData.chiefComplaint.palliation.join(', ')}
-                      {hipaaData.chiefComplaint.palliationOther && `, ${hipaaData.chiefComplaint.palliationOther}`}
+                      <strong>Palliative Factors:</strong> Symptoms are relieved by {hipaaData.chiefComplaint.palliation.join(', ')}
+                      {hipaaData.chiefComplaint.palliationOther && `, ${hipaaData.chiefComplaint.palliationOther}`}.
                     </p>
                   )}
                   
                   {hipaaData.chiefComplaint.quality.length > 0 && (
                     <p className="mb-3">
-                      증상의 성질: {hipaaData.chiefComplaint.quality.join(', ')}
-                      {hipaaData.chiefComplaint.qualityOther && `, ${hipaaData.chiefComplaint.qualityOther}`}
+                      <strong>Quality of Symptoms:</strong> The patient describes the pain as {hipaaData.chiefComplaint.quality.join(', ')}
+                      {hipaaData.chiefComplaint.qualityOther && `, ${hipaaData.chiefComplaint.qualityOther}`}.
+                    </p>
+                  )}
+                  
+                  {hipaaData.chiefComplaint.frequency && (
+                    <p className="mb-3">
+                      <strong>Frequency:</strong> {hipaaData.chiefComplaint.frequency}
+                    </p>
+                  )}
+                  
+                  {hipaaData.chiefComplaint.timing && (
+                    <p className="mb-3">
+                      <strong>Timing:</strong> {hipaaData.chiefComplaint.timing}
                     </p>
                   )}
                 </div>
@@ -166,42 +178,46 @@ export const SOAPReport: React.FC<SOAPReportProps> = ({ data, onClose }) => {
 
               {/* Objective */}
               <div className="border-l-4 border-green-500 pl-4">
-                <h2 className="text-lg font-bold text-green-700 mb-3">O - Objective</h2>
+                <h2 className="text-lg font-bold text-green-700 mb-3">O - OBJECTIVE</h2>
                 <div className="text-gray-700 leading-relaxed">
                   <p className="mb-3">
-                    <strong>신체 측정:</strong> 
-                    {hipaaData.vitalSigns.heightFt && hipaaData.vitalSigns.heightIn && ` 신장 ${hipaaData.vitalSigns.heightFt}피트 ${hipaaData.vitalSigns.heightIn}인치,`}
-                    {hipaaData.vitalSigns.weight && ` 체중 ${hipaaData.vitalSigns.weight}파운드,`}
-                    {hipaaData.vitalSigns.temp && ` 체온 ${hipaaData.vitalSigns.temp}°F,`}
-                    {hipaaData.vitalSigns.bpSystolic && hipaaData.vitalSigns.bpDiastolic && ` 혈압 ${hipaaData.vitalSigns.bpSystolic}/${hipaaData.vitalSigns.bpDiastolic}mmHg,`}
-                    {hipaaData.vitalSigns.heartRate && ` 심박수 ${hipaaData.vitalSigns.heartRate}회/분,`}
-                    {hipaaData.vitalSigns.heartRhythm && ` 심박 리듬 ${hipaaData.vitalSigns.heartRhythm},`}
-                    {hipaaData.vitalSigns.lungRate && ` 호흡수 ${hipaaData.vitalSigns.lungRate}회/분,`}
-                    {hipaaData.vitalSigns.lungSound && ` 폐음 ${hipaaData.vitalSigns.lungSound}로 측정되었습니다.`}
+                    <strong>Vital Signs:</strong> 
+                    {hipaaData.vitalSigns.heightFt && hipaaData.vitalSigns.heightIn && ` Height: ${hipaaData.vitalSigns.heightFt}'${hipaaData.vitalSigns.heightIn}",`}
+                    {hipaaData.vitalSigns.weight && ` Weight: ${hipaaData.vitalSigns.weight} lbs,`}
+                    {hipaaData.vitalSigns.temp && ` Temperature: ${hipaaData.vitalSigns.temp}°F,`}
+                    {hipaaData.vitalSigns.bpSystolic && hipaaData.vitalSigns.bpDiastolic && ` Blood Pressure: ${hipaaData.vitalSigns.bpSystolic}/${hipaaData.vitalSigns.bpDiastolic} mmHg,`}
+                    {hipaaData.vitalSigns.heartRate && ` Heart Rate: ${hipaaData.vitalSigns.heartRate} bpm,`}
+                    {hipaaData.vitalSigns.heartRhythm && ` Heart Rhythm: ${hipaaData.vitalSigns.heartRhythm},`}
+                    {hipaaData.vitalSigns.lungRate && ` Respiratory Rate: ${hipaaData.vitalSigns.lungRate}/min,`}
+                    {hipaaData.vitalSigns.lungSound && ` Lung Sounds: ${hipaaData.vitalSigns.lungSound}.`}
                   </p>
                   
                   <p className="mb-3">
-                    <strong>설진:</strong> 
-                    {hipaaData.tongue.body.color && ` 설체는 ${hipaaData.tongue.body.color}색이며 ${hipaaData.tongue.body.shape}한 형태를 보입니다.`}
-                    {hipaaData.tongue.coating.color && ` 설태는 ${hipaaData.tongue.coating.color}색으로 ${hipaaData.tongue.coating.quality.join(', ')}한 상태입니다.`}
+                    <strong>Tongue Examination:</strong> 
+                    {hipaaData.tongue.body.color && ` Tongue body appears ${hipaaData.tongue.body.color} in color with ${hipaaData.tongue.body.shape} shape.`}
+                    {hipaaData.tongue.coating.color && ` Tongue coating is ${hipaaData.tongue.coating.color} in color and ${hipaaData.tongue.coating.quality.join(', ')} in quality.`}
                     {hipaaData.tongue.coating.notes && ` ${hipaaData.tongue.coating.notes}`}
                   </p>
                   
                   <p className="mb-3">
-                    <strong>맥진:</strong> 
-                    {hipaaData.pulse.overall.length > 0 && ` 맥상은 ${hipaaData.pulse.overall.join(', ')}으로 나타났습니다.`}
+                    <strong>Pulse Examination:</strong> 
+                    {hipaaData.pulse.overall.length > 0 && ` Pulse quality is ${hipaaData.pulse.overall.join(', ')}.`}
                     {hipaaData.pulse.notes && ` ${hipaaData.pulse.notes}`}
+                  </p>
+                  
+                  <p className="mb-3">
+                    <strong>Physical Examination:</strong> The patient appears alert and oriented. No acute distress noted. Range of motion and functional assessment performed as indicated by presenting symptoms.
                   </p>
                 </div>
               </div>
 
               {/* Assessment */}
               <div className="border-l-4 border-yellow-500 pl-4">
-                <h2 className="text-lg font-bold text-yellow-700 mb-3">A - Assessment</h2>
+                <h2 className="text-lg font-bold text-yellow-700 mb-3">A - ASSESSMENT</h2>
                 <div className="text-gray-700 leading-relaxed">
                   {hipaaData.diagnosisAndTreatment.tcmDiagnosis && (
                     <p className="mb-3">
-                      <strong>한의학 진단:</strong> {hipaaData.diagnosisAndTreatment.tcmDiagnosis}
+                      <strong>Traditional Chinese Medicine Diagnosis:</strong> {hipaaData.diagnosisAndTreatment.tcmDiagnosis}
                     </p>
                   )}
                   
@@ -210,61 +226,65 @@ export const SOAPReport: React.FC<SOAPReportProps> = ({ data, onClose }) => {
                     hipaaData.diagnosisAndTreatment.eightPrinciples.excessDeficient || 
                     hipaaData.diagnosisAndTreatment.eightPrinciples.yangYin) && (
                     <p className="mb-3">
-                      <strong>팔강 변증:</strong> 
-                      {hipaaData.diagnosisAndTreatment.eightPrinciples.exteriorInterior && ` 표리에서는 ${hipaaData.diagnosisAndTreatment.eightPrinciples.exteriorInterior},`}
-                      {hipaaData.diagnosisAndTreatment.eightPrinciples.heatCold && ` 한열에서는 ${hipaaData.diagnosisAndTreatment.eightPrinciples.heatCold},`}
-                      {hipaaData.diagnosisAndTreatment.eightPrinciples.excessDeficient && ` 허실에서는 ${hipaaData.diagnosisAndTreatment.eightPrinciples.excessDeficient},`}
-                      {hipaaData.diagnosisAndTreatment.eightPrinciples.yangYin && ` 음양에서는 ${hipaaData.diagnosisAndTreatment.eightPrinciples.yangYin}으로 판단됩니다.`}
+                      <strong>Eight Principles Pattern Differentiation:</strong> 
+                      {hipaaData.diagnosisAndTreatment.eightPrinciples.exteriorInterior && ` Exterior/Interior: ${hipaaData.diagnosisAndTreatment.eightPrinciples.exteriorInterior},`}
+                      {hipaaData.diagnosisAndTreatment.eightPrinciples.heatCold && ` Heat/Cold: ${hipaaData.diagnosisAndTreatment.eightPrinciples.heatCold},`}
+                      {hipaaData.diagnosisAndTreatment.eightPrinciples.excessDeficient && ` Excess/Deficient: ${hipaaData.diagnosisAndTreatment.eightPrinciples.excessDeficient},`}
+                      {hipaaData.diagnosisAndTreatment.eightPrinciples.yangYin && ` Yang/Yin: ${hipaaData.diagnosisAndTreatment.eightPrinciples.yangYin}.`}
                     </p>
                   )}
                   
                   {hipaaData.diagnosisAndTreatment.etiology && (
                     <p className="mb-3">
-                      <strong>병인:</strong> {hipaaData.diagnosisAndTreatment.etiology}
+                      <strong>Etiology:</strong> {hipaaData.diagnosisAndTreatment.etiology}
                     </p>
                   )}
                   
                   {hipaaData.chiefComplaint.westernMedicalDiagnosis && (
                     <p className="mb-3">
-                      <strong>서양의학 진단:</strong> {hipaaData.chiefComplaint.westernMedicalDiagnosis}
+                      <strong>Western Medical Diagnosis:</strong> {hipaaData.chiefComplaint.westernMedicalDiagnosis}
                     </p>
                   )}
+                  
+                  <p className="mb-3">
+                    <strong>Clinical Assessment:</strong> Based on the patient's presentation, examination findings, and TCM pattern differentiation, the condition is assessed as requiring acupuncture and/or herbal medicine intervention to address the underlying imbalance and symptom presentation.
+                  </p>
                 </div>
               </div>
 
               {/* Plan */}
               <div className="border-l-4 border-red-500 pl-4">
-                <h2 className="text-lg font-bold text-red-700 mb-3">P - Plan</h2>
+                <h2 className="text-lg font-bold text-red-700 mb-3">P - PLAN</h2>
                 <div className="text-gray-700 leading-relaxed">
                   {hipaaData.diagnosisAndTreatment.treatmentPrinciple && (
                     <p className="mb-3">
-                      <strong>치료 원칙:</strong> {hipaaData.diagnosisAndTreatment.treatmentPrinciple}
+                      <strong>Treatment Principle:</strong> {hipaaData.diagnosisAndTreatment.treatmentPrinciple}
                     </p>
                   )}
                   
                   {(hipaaData.diagnosisAndTreatment.acupunctureMethod.length > 0 || hipaaData.diagnosisAndTreatment.acupunctureMethodOther) && (
                     <p className="mb-3">
-                      <strong>침구 치료:</strong> 
-                      {hipaaData.diagnosisAndTreatment.acupunctureMethod.length > 0 && ` ${hipaaData.diagnosisAndTreatment.acupunctureMethod.join(', ')} 방법을 사용하며,`}
-                      {hipaaData.diagnosisAndTreatment.acupunctureMethodOther && ` ${hipaaData.diagnosisAndTreatment.acupunctureMethodOther} 방법도 병행합니다.`}
+                      <strong>Acupuncture Treatment:</strong> 
+                      {hipaaData.diagnosisAndTreatment.acupunctureMethod.length > 0 && ` Treatment will utilize ${hipaaData.diagnosisAndTreatment.acupunctureMethod.join(', ')} technique(s),`}
+                      {hipaaData.diagnosisAndTreatment.acupunctureMethodOther && ` with additional ${hipaaData.diagnosisAndTreatment.acupunctureMethodOther} method as indicated.`}
                     </p>
                   )}
                   
                   {hipaaData.diagnosisAndTreatment.acupuncturePoints && (
                     <p className="mb-3">
-                      <strong>침구 혈위:</strong> {hipaaData.diagnosisAndTreatment.acupuncturePoints}
+                      <strong>Acupuncture Points:</strong> {hipaaData.diagnosisAndTreatment.acupuncturePoints}
                     </p>
                   )}
                   
                   {hipaaData.diagnosisAndTreatment.herbalTreatment && (
                     <p className="mb-3">
-                      <strong>한약 치료:</strong> {hipaaData.diagnosisAndTreatment.herbalTreatment}
+                      <strong>Herbal Medicine:</strong> {hipaaData.diagnosisAndTreatment.herbalTreatment}
                     </p>
                   )}
                   
                   {(hipaaData.diagnosisAndTreatment.selectedTreatment !== 'None' || hipaaData.diagnosisAndTreatment.otherTreatmentText) && (
                     <p className="mb-3">
-                      <strong>기타 치료:</strong> 
+                      <strong>Additional Therapies:</strong> 
                       {hipaaData.diagnosisAndTreatment.selectedTreatment !== 'None' && ` ${hipaaData.diagnosisAndTreatment.selectedTreatment}`}
                       {hipaaData.diagnosisAndTreatment.otherTreatmentText && ` - ${hipaaData.diagnosisAndTreatment.otherTreatmentText}`}
                     </p>
@@ -272,15 +292,19 @@ export const SOAPReport: React.FC<SOAPReportProps> = ({ data, onClose }) => {
                   
                   {hipaaData.diagnosisAndTreatment.cpt && (
                     <p className="mb-3">
-                      <strong>CPT 코드:</strong> {hipaaData.diagnosisAndTreatment.cpt}
+                      <strong>CPT Codes:</strong> {hipaaData.diagnosisAndTreatment.cpt}
                     </p>
                   )}
                   
                   <p className="mb-3">
-                    <strong>치료 반응:</strong> 
-                    {hipaaData.respondToCare.status && ` 현재 상태는 ${hipaaData.respondToCare.status}이며,`}
-                    {hipaaData.respondToCare.improvedDays && ` ${hipaaData.respondToCare.improvedDays}일간의 치료를 통해 개선되었습니다.`}
+                    <strong>Treatment Response:</strong> 
+                    {hipaaData.respondToCare.status && ` Current status: ${hipaaData.respondToCare.status}.`}
+                    {hipaaData.respondToCare.improvedDays && ` Patient has shown improvement over ${hipaaData.respondToCare.improvedDays} days of treatment.`}
                     {hipaaData.respondToCare.notes && ` ${hipaaData.respondToCare.notes}`}
+                  </p>
+                  
+                  <p className="mb-3">
+                    <strong>Follow-up Plan:</strong> Patient will continue with the prescribed treatment plan. Progress will be monitored and treatment plan adjusted as necessary based on patient response and clinical presentation.
                   </p>
                 </div>
               </div>
