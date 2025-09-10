@@ -8,7 +8,7 @@ export const AuthWrapper: React.FC = () => {
   const [showWaiting, setShowWaiting] = useState(false);
 
   if (showWaiting) {
-    return <WaitingForApproval />;
+    return <WaitingForApproval onBackToLogin={() => setShowWaiting(false)} />;
   }
 
   return (
