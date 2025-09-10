@@ -35,29 +35,37 @@ export interface ClinicInfo {
 
 export class IndexedDBDatabase {
   private dbName = 'PatientChartDB';
-  private version = 1;
+  private version = 2; // 버전 증가로 스키마 재생성
   private db: IDBDatabase | null = null;
 
   async initialize(): Promise<void> {
     return new Promise((resolve, reject) => {
+      console.log('🗄️ IndexedDB 초기화 시작...');
       const request = indexedDB.open(this.dbName, this.version);
 
-      request.onerror = () => {
+      request.onerror = (event) => {
+        console.error('❌ IndexedDB 열기 실패:', event);
         reject(new Error('IndexedDB 열기 실패'));
       };
 
       request.onsuccess = () => {
         this.db = request.result;
+        console.log('✅ IndexedDB 초기화 완료');
         resolve();
       };
 
       request.onupgradeneeded = (event) => {
+        console.log('🔄 IndexedDB 스키마 업그레이드 시작...');
         const db = (event.target as IDBOpenDBRequest).result;
 
         // Users 테이블
         if (!db.objectStoreNames.contains('users')) {
+          console.log('📝 Users 테이블 생성 중...');
           const userStore = db.createObjectStore('users', { keyPath: 'id' });
           userStore.createIndex('username', 'username', { unique: true });
+          console.log('✅ Users 테이블 생성 완료');
+        } else {
+          console.log('✅ Users 테이블 이미 존재');
         }
 
         // Patient Charts 테이블
@@ -86,6 +94,26 @@ export class IndexedDBDatabase {
     return transaction.objectStore(storeName);
   }
 
+  // 사용자명으로 사용자 조회
+  async getUserByUsername(username: string): Promise<User | null> {
+    if (!this.db) throw new Error('데이터베이스가 초기화되지 않았습니다.');
+    
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(['users'], 'readonly');
+      const store = transaction.objectStore('users');
+      const index = store.index('username');
+      const request = index.get(username);
+      
+      request.onsuccess = () => {
+        resolve(request.result || null);
+      };
+      
+      request.onerror = () => {
+        reject(new Error('사용자 조회 실패'));
+      };
+    });
+  }
+
   // 사용자 등록
   async registerUser(userData: {
     username: string;
@@ -95,6 +123,14 @@ export class IndexedDBDatabase {
     therapistLicenseNo: string;
   }): Promise<{ user: User; token: string }> {
     console.log('🗄️ 데이터베이스 회원가입 시작:', userData.username);
+    
+    // 먼저 사용자명 중복 체크
+    const existingUser = await this.getUserByUsername(userData.username);
+    if (existingUser) {
+      console.error('❌ 사용자명이 이미 존재합니다:', userData.username);
+      throw new Error('이미 존재하는 사용자명입니다.');
+    }
+    
     const userId = this.generateId();
     const passwordHash = await this.hashPassword(userData.password);
     
@@ -124,7 +160,12 @@ export class IndexedDBDatabase {
       
       request.onerror = (event) => {
         console.error('❌ 사용자 등록 실패:', event);
-        reject(new Error('사용자 등록 실패'));
+        console.error('❌ 오류 상세:', {
+          error: event.target?.error,
+          message: event.target?.error?.message,
+          name: event.target?.error?.name
+        });
+        reject(new Error(`사용자 등록 실패: ${event.target?.error?.message || '알 수 없는 오류'}`));
       };
     });
   }
