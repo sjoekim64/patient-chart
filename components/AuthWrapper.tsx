@@ -18,7 +18,11 @@ export const AuthWrapper: React.FC = () => {
       ) : (
         <RegisterForm 
           onSwitchToLogin={() => setIsLogin(true)}
-          onRegistrationSuccess={() => setShowWaiting(true)}
+          onRegistrationSuccess={() => {
+            // 테스트용으로 회원가입 성공 시 바로 메인 화면으로 이동
+            // (운영 시 승인 대기 화면으로 변경: setShowWaiting(true))
+            window.location.reload(); // 페이지 새로고침으로 메인 화면으로 이동
+          }}
         />
       )}
     </>

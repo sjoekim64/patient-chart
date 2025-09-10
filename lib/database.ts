@@ -105,7 +105,7 @@ export class IndexedDBDatabase {
       therapistName: userData.therapistName,
       therapistLicenseNo: userData.therapistLicenseNo,
       createdAt: new Date().toISOString(),
-      isApproved: false, // 기본적으로 승인되지 않은 상태
+      isApproved: true, // 테스트용으로 임시 승인 (운영 시 false로 변경)
     };
 
     const store = await this.getStore('users', 'readwrite');

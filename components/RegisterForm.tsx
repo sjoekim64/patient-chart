@@ -45,7 +45,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin, onR
       if (!response.success) {
         setError(response.error || '회원가입에 실패했습니다.');
       } else {
-        // 회원가입 성공 시 승인 대기 화면으로 이동
+        // 테스트용으로 회원가입 성공 시 바로 메인 화면으로 이동 (운영 시 승인 대기로 변경)
         onRegistrationSuccess?.();
       }
     } catch (error) {
