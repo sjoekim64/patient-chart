@@ -129,6 +129,7 @@ export const sendRegistrationNotification = async (data: RegistrationNotificatio
     if (!EMAILJS_PUBLIC_KEY || EMAILJS_PUBLIC_KEY === 'your_emailjs_public_key') {
       console.warn('⚠️ EmailJS가 설정되지 않았습니다. .env.local 파일에 EMAILJS_PUBLIC_KEY를 설정해주세요.');
       console.log('📧 회원가입 알림 데이터:', data);
+      // 이메일 발송 실패해도 회원가입은 성공으로 처리
       return false;
     }
 

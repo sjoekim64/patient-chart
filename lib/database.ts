@@ -106,7 +106,7 @@ export class IndexedDBDatabase {
       therapistName: userData.therapistName,
       therapistLicenseNo: userData.therapistLicenseNo,
       createdAt: new Date().toISOString(),
-      isApproved: true, // 테스트용으로 임시 승인 (운영 시 false로 변경)
+      isApproved: false, // 승인 대기 상태
     };
     console.log('👤 생성된 사용자 객체:', user);
 

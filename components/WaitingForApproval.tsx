@@ -35,6 +35,17 @@ export const WaitingForApproval: React.FC<WaitingForApprovalProps> = ({ onBackTo
             </div>
           </div>
           
+          <div className="bg-green-50 border border-green-200 rounded-md p-4 mb-6">
+            <div className="text-sm text-green-800">
+              <p className="font-medium mb-2">🔧 관리자 페이지 접근</p>
+              <p>관리자는 다음 URL로 접근하여 승인/거부를 처리할 수 있습니다:</p>
+              <div className="mt-2 p-2 bg-green-100 rounded text-xs font-mono break-all">
+                {window.location.origin}?admin=true
+              </div>
+              <p className="mt-2 text-xs">※ 관리자만 접근 가능합니다.</p>
+            </div>
+          </div>
+          
           <div className="space-y-4">
             <button
               onClick={onBackToLogin}

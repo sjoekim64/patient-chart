@@ -149,19 +149,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         // 이메일 발송 실패는 회원가입에 영향을 주지 않음
       });
       
-      // 테스트용으로 회원가입 후 바로 로그인 (운영 시 승인 대기로 변경)
-      console.log('🔑 토큰 저장 및 로그인 처리:', result.token);
-      localStorage.setItem('auth_token', result.token);
-      dispatch({ 
-        type: 'LOGIN_SUCCESS', 
-        payload: { 
-          user: result.user, 
-          token: result.token 
-        } 
-      });
+      // 회원가입은 성공했지만 승인 대기 상태이므로 로그인하지 않음
+      console.log('⏳ 회원가입 완료, 승인 대기 상태');
+      dispatch({ type: 'LOGIN_FAILURE' });
       
-      console.log('🎉 회원가입 및 자동 로그인 완료');
-      return { success: true, data: result };
+      return { 
+        success: true, 
+        data: { 
+          message: '회원가입이 완료되었습니다. 관리자 승인을 기다리고 있습니다. 승인 후 로그인할 수 있습니다.',
+          requiresApproval: true
+        }
+      };
     } catch (error) {
       dispatch({ type: 'LOGIN_FAILURE' });
       return { 
