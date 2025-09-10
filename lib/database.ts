@@ -94,6 +94,7 @@ export class IndexedDBDatabase {
     therapistName: string;
     therapistLicenseNo: string;
   }): Promise<{ user: User; token: string }> {
+    console.log('🗄️ 데이터베이스 회원가입 시작:', userData.username);
     const userId = this.generateId();
     const passwordHash = await this.hashPassword(userData.password);
     
@@ -107,6 +108,7 @@ export class IndexedDBDatabase {
       createdAt: new Date().toISOString(),
       isApproved: true, // 테스트용으로 임시 승인 (운영 시 false로 변경)
     };
+    console.log('👤 생성된 사용자 객체:', user);
 
     const store = await this.getStore('users', 'readwrite');
     
@@ -114,11 +116,14 @@ export class IndexedDBDatabase {
       const request = store.add(user);
       
       request.onsuccess = () => {
+        console.log('✅ 사용자 데이터베이스 저장 성공');
         const token = this.generateToken(user);
+        console.log('🔑 생성된 토큰:', token);
         resolve({ user, token });
       };
       
-      request.onerror = () => {
+      request.onerror = (event) => {
+        console.error('❌ 사용자 등록 실패:', event);
         reject(new Error('사용자 등록 실패'));
       };
     });

@@ -40,11 +40,15 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin, onR
     setIsLoading(true);
 
     try {
+      console.log('📝 회원가입 폼 제출:', formData.username);
       const response = await register(formData);
+      console.log('📋 회원가입 응답:', response);
       
       if (!response.success) {
+        console.error('❌ 회원가입 실패:', response.error);
         setError(response.error || '회원가입에 실패했습니다.');
       } else {
+        console.log('✅ 회원가입 성공, 메인 화면으로 이동');
         // 테스트용으로 회원가입 성공 시 바로 메인 화면으로 이동 (운영 시 승인 대기로 변경)
         onRegistrationSuccess?.();
       }

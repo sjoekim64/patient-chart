@@ -122,6 +122,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     dispatch({ type: 'LOGIN_START' });
     
     try {
+      console.log('🔐 회원가입 시작:', data.username);
       const result = await database.registerUser({
         username: data.username,
         password: data.password,
@@ -129,6 +130,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         therapistName: data.therapistName,
         therapistLicenseNo: data.therapistLicenseNo,
       });
+      console.log('✅ 회원가입 성공:', result);
       
       // 회원가입 성공 시 이메일 알림 발송 (비동기로 처리)
       console.log('📧 회원가입 알림 이메일 발송 시작...');
@@ -148,6 +150,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       });
       
       // 테스트용으로 회원가입 후 바로 로그인 (운영 시 승인 대기로 변경)
+      console.log('🔑 토큰 저장 및 로그인 처리:', result.token);
       localStorage.setItem('auth_token', result.token);
       dispatch({ 
         type: 'LOGIN_SUCCESS', 
@@ -157,6 +160,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         } 
       });
       
+      console.log('🎉 회원가입 및 자동 로그인 완료');
       return { success: true, data: result };
     } catch (error) {
       dispatch({ type: 'LOGIN_FAILURE' });
