@@ -96,7 +96,10 @@ export class IndexedDBDatabase {
 
   // 사용자명으로 사용자 조회
   async getUserByUsername(username: string): Promise<User | null> {
-    if (!this.db) throw new Error('데이터베이스가 초기화되지 않았습니다.');
+    if (!this.db) {
+      console.warn('⚠️ 데이터베이스가 초기화되지 않음, 초기화 시도...');
+      await this.initialize();
+    }
     
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction(['users'], 'readonly');
@@ -123,6 +126,12 @@ export class IndexedDBDatabase {
     therapistLicenseNo: string;
   }): Promise<{ user: User; token: string }> {
     console.log('🗄️ 데이터베이스 회원가입 시작:', userData.username);
+    
+    // 데이터베이스 초기화 보장
+    if (!this.db) {
+      console.log('🗄️ 데이터베이스 초기화 필요, 초기화 중...');
+      await this.initialize();
+    }
     
     // 먼저 사용자명 중복 체크
     const existingUser = await this.getUserByUsername(userData.username);

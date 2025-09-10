@@ -123,6 +123,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     
     try {
       console.log('🔐 회원가입 시작:', data.username);
+      
+      // 데이터베이스 초기화 먼저 실행
+      console.log('🗄️ 데이터베이스 초기화 중...');
+      await database.initialize();
+      console.log('✅ 데이터베이스 초기화 완료');
+      
       const result = await database.registerUser({
         username: data.username,
         password: data.password,
