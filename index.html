@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient Chart Input</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- Add Babel Standalone for live JSX/TSX transformation -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.1",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.1/",
+    "react/": "https://esm.sh/react@^19.1.1/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.15.0"
+  }
+}
+</script>
+<style>
+  .break-inside-avoid {
+    page-break-inside: avoid;
+  }
+
+  .print-footer {
+    display: none; /* Hidden by default */
+  }
+
+  .chart-section {
+    border-bottom: 2px solid black;
+  }
+  .chart-content > .chart-section:last-child {
+    border-bottom: none;
+  }
+
+  @media print {
+    body {
+      background-color: white;
+    }
+    #root > div {
+      padding: 0;
+    }
+    #print-area {
+      box-shadow: none;
+      border-radius: 0;
+      padding: 0;
+      margin: 0;
+      max-width: 100%;
+      border: none !important;
+    }
+    .chart-content {
+       border: 2px solid black;
+    }
+    .print-footer {
+      display: block;
+      position: fixed;
+      bottom: 15px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 9pt;
+      color: #666;
+    }
+    .page-number::after {
+      content: "Page " counter(page);
+    }
+    /* Ensure clean page breaks */
+    .break-before-page {
+        page-break-before: always;
+    }
+    .break-after-page {
+        page-break-after: always;
+    }
+    .break-inside-avoid {
+        page-break-inside: avoid;
+    }
+  }
+</style>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-slate-100">
+  <div id="root"></div>
+  <!-- Change script type to text/babel so Babel can transform it -->
+  <script type="text/babel" data-type="module" src="index.tsx"></script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
