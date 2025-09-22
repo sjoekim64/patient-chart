@@ -8,6 +8,13 @@ export const AdminDashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  const handleBackToMain = () => {
+    // 관리자 모드에서 일반 모드로 돌아가기
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.delete('admin');
+    window.location.href = currentUrl.toString();
+  };
+
   const loadUsers = async () => {
     try {
       await database.initialize();
@@ -87,7 +94,15 @@ export const AdminDashboard: React.FC = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h1 className="text-3xl font-bold text-gray-800 mb-6">관리자 대시보드</h1>
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold text-gray-800">관리자 대시보드</h1>
+            <button
+              onClick={handleBackToMain}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            >
+              메인 페이지로 돌아가기
+            </button>
+          </div>
           
           {message && (
             <div className={`mb-6 p-4 rounded-md ${

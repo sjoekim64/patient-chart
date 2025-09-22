@@ -354,16 +354,29 @@ const PatientChartApp: React.FC = () => {
           <div className="text-right">
             <p className="text-sm text-gray-600">환영합니다, {user?.therapistName}님</p>
             <p className="text-xs text-gray-500">{user?.clinicName}</p>
-            <button
-              onClick={() => {
-                clearAdminMode();
-                localStorage.removeItem('adminRedirected');
-                logout();
-              }}
-              className="mt-2 px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-            >
-              로그아웃
-            </button>
+            <div className="mt-2 flex gap-2">
+              <button
+                onClick={() => {
+                  // 관리자 페이지로 이동
+                  const currentUrl = new URL(window.location.href);
+                  currentUrl.searchParams.set('admin', 'true');
+                  window.location.href = currentUrl.toString();
+                }}
+                className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                관리자 페이지
+              </button>
+              <button
+                onClick={() => {
+                  clearAdminMode();
+                  localStorage.removeItem('adminRedirected');
+                  logout();
+                }}
+                className="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                로그아웃
+              </button>
+            </div>
           </div>
         </div>
       </header>
