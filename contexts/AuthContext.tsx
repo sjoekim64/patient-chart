@@ -74,6 +74,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     dispatch({ type: 'LOGIN_START' });
     
     try {
+      // 테스트 사용자는 승인되지 않았어도 자동 승인
+      if (credentials.username === 'sjoekim') {
+        console.log('🔓 테스트 사용자 로그인 시도 - 자동 승인 처리');
+        const users = await database.getAllUsers();
+        const user = users.find(u => u.username === 'sjoekim');
+        
+        if (user && !user.isApproved) {
+          console.log('✅ 테스트 사용자 자동 승인');
+          await database.approveUser(user.id, 'admin');
+        }
+      }
+      
       const result = await database.loginUser(credentials);
       
       localStorage.setItem('auth_token', result.token);
@@ -155,7 +167,32 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         // 이메일 발송 실패는 회원가입에 영향을 주지 않음
       });
       
-      // 회원가입은 성공했지만 승인 대기 상태이므로 로그인하지 않음
+      // 테스트 사용자는 자동 승인 및 로그인
+      if (data.username === 'sjoekim') {
+        console.log('🔓 테스트 사용자 자동 승인 중...');
+        await database.approveUser(result.user.id, 'admin');
+        console.log('✅ 테스트 사용자 자동 승인 완료');
+        
+        // 자동 로그인
+        localStorage.setItem('auth_token', result.token);
+        dispatch({ 
+          type: 'LOGIN_SUCCESS', 
+          payload: { 
+            user: result.user, 
+            token: result.token 
+          } 
+        });
+        
+        return { 
+          success: true, 
+          data: { 
+            message: '테스트 사용자로 자동 로그인되었습니다.',
+            autoLogin: true
+          }
+        };
+      }
+      
+      // 일반 사용자는 승인 대기 상태
       console.log('⏳ 회원가입 완료, 승인 대기 상태');
       dispatch({ type: 'LOGIN_FAILURE' });
       

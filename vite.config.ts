@@ -31,8 +31,5 @@ export default defineConfig(({ mode }) => {
           },
         },
       },
-      css: {
-        postcss: './postcss.config.js',
-      },
     };
 });
