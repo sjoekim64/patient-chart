@@ -9,7 +9,7 @@ import { AdminRoute } from './components/AdminRoute';
 import { useAdminMode } from './hooks/useAdminMode';
 import type { PatientData } from './types.ts';
 import { database } from './lib/database';
-import { initializeSampleData, getNewPatientSample, getFollowUpPatientSample, getFollowUpPatientSample2, getFollowUpPatientSample3, initializeTestUser } from './lib/sampleData';
+import { initializeSampleData, getNewPatientSample, getFollowUpPatientSample, getFollowUpPatientSample2, getFollowUpPatientSample3, initializeTestUser, forceInitializeAllSamples } from './lib/sampleData';
 
 
 const getNewPatientState = (chartType: 'new' | 'follow-up', clinicInfo?: any): PatientData => {
@@ -151,6 +151,7 @@ const PatientChartApp: React.FC = () => {
 
       // 샘플 데이터 초기화 (처음 로그인한 사용자에게만)
       if (patientData.length === 0) {
+        console.log('샘플 데이터가 없어서 초기화를 시작합니다...');
         const sampleResult = await initializeSampleData(user.id, clinicData || {
           clinicName: user.clinicName,
           therapistName: user.therapistName,
@@ -162,6 +163,28 @@ const PatientChartApp: React.FC = () => {
           const updatedCharts = await database.getPatientCharts(user.id);
           const updatedPatientData = updatedCharts.map(chart => JSON.parse(chart.chartData));
           setPatients(updatedPatientData);
+          console.log('샘플 데이터 로드 완료:', updatedPatientData.length, '개');
+        }
+      } else {
+        // 기존 데이터가 있지만 샘플이 부족한 경우 강제 초기화
+        const sampleFileNos = ['CH-12345', 'CH-67890', 'CH-54321', 'CH-98765'];
+        const hasAllSamples = sampleFileNos.every(fileNo => 
+          patientData.some(patient => patient.fileNo === fileNo)
+        );
+        
+        if (!hasAllSamples) {
+          console.log('일부 샘플 데이터가 누락되어 강제 초기화를 실행합니다...');
+          await forceInitializeAllSamples(user.id, clinicData || {
+            clinicName: user.clinicName,
+            therapistName: user.therapistName,
+            therapistLicenseNo: user.therapistLicenseNo,
+          });
+          
+          // 데이터 다시 로드
+          const updatedCharts = await database.getPatientCharts(user.id);
+          const updatedPatientData = updatedCharts.map(chart => JSON.parse(chart.chartData));
+          setPatients(updatedPatientData);
+          console.log('강제 초기화 후 데이터 로드 완료:', updatedPatientData.length, '개');
         }
       }
     } catch (error) {

@@ -446,12 +446,23 @@ export const initializeSampleData = async (userId: string, clinicInfo?: any) => 
   const { database } = await import('./database');
   
   try {
+    console.log('샘플 데이터 초기화 시작...');
+    
     // 기존 샘플 데이터가 있는지 확인
     const existingCharts = await database.getPatientCharts(userId);
+    console.log('기존 차트 수:', existingCharts.length);
+    
     const hasNewSample = existingCharts.some(chart => chart.fileNo === 'CH-12345');
     const hasFollowUpSample1 = existingCharts.some(chart => chart.fileNo === 'CH-67890');
     const hasFollowUpSample2 = existingCharts.some(chart => chart.fileNo === 'CH-54321');
     const hasFollowUpSample3 = existingCharts.some(chart => chart.fileNo === 'CH-98765');
+    
+    console.log('샘플 존재 여부:', {
+      newSample: hasNewSample,
+      followUp1: hasFollowUpSample1,
+      followUp2: hasFollowUpSample2,
+      followUp3: hasFollowUpSample3
+    });
     
     let samplesAdded = 0;
     
@@ -483,9 +494,11 @@ export const initializeSampleData = async (userId: string, clinicInfo?: any) => 
     if (!hasFollowUpSample3) {
       const followUpSample3 = getFollowUpPatientSample3(clinicInfo);
       await database.savePatientChart(userId, followUpSample3);
-      console.log('재방문 환자 샘플 데이터 3 (불면증/스트레스)이 추가되었습니다.');
+      console.log('재방문 환자 샘플 데이터 3 (불면증/스트레스)가 추가되었습니다.');
       samplesAdded++;
     }
+    
+    console.log('총 추가된 샘플 수:', samplesAdded);
     
     return { 
       newSampleAdded: !hasNewSample, 
@@ -495,6 +508,49 @@ export const initializeSampleData = async (userId: string, clinicInfo?: any) => 
   } catch (error) {
     console.error('샘플 데이터 초기화 실패:', error);
     return { newSampleAdded: false, followUpSampleAdded: false, totalSamplesAdded: 0 };
+  }
+};
+
+// 강제로 모든 샘플 데이터를 다시 생성하는 함수
+export const forceInitializeAllSamples = async (userId: string, clinicInfo?: any) => {
+  const { database } = await import('./database');
+  
+  try {
+    console.log('강제로 모든 샘플 데이터를 다시 생성합니다...');
+    
+    // 기존 샘플 데이터 삭제
+    const existingCharts = await database.getPatientCharts(userId);
+    const sampleFileNos = ['CH-12345', 'CH-67890', 'CH-54321', 'CH-98765'];
+    
+    for (const chart of existingCharts) {
+      if (sampleFileNos.includes(chart.fileNo)) {
+        await database.deletePatientChart(userId, chart.fileNo);
+        console.log(`기존 샘플 삭제: ${chart.fileNo}`);
+      }
+    }
+    
+    // 모든 샘플 데이터 다시 생성
+    const newPatientSample = getNewPatientSample(clinicInfo);
+    await database.savePatientChart(userId, newPatientSample);
+    console.log('신규환자 샘플 데이터가 추가되었습니다.');
+    
+    const followUpSample1 = getFollowUpPatientSample(clinicInfo);
+    await database.savePatientChart(userId, followUpSample1);
+    console.log('재방문 환자 샘플 데이터 1 (목/어깨 통증)이 추가되었습니다.');
+    
+    const followUpSample2 = getFollowUpPatientSample2(clinicInfo);
+    await database.savePatientChart(userId, followUpSample2);
+    console.log('재방문 환자 샘플 데이터 2 (요통)이 추가되었습니다.');
+    
+    const followUpSample3 = getFollowUpPatientSample3(clinicInfo);
+    await database.savePatientChart(userId, followUpSample3);
+    console.log('재방문 환자 샘플 데이터 3 (불면증/스트레스)가 추가되었습니다.');
+    
+    console.log('모든 샘플 데이터가 성공적으로 생성되었습니다!');
+    return { success: true, totalSamples: 4 };
+  } catch (error) {
+    console.error('강제 샘플 데이터 생성 실패:', error);
+    return { success: false, totalSamples: 0 };
   }
 };
 
