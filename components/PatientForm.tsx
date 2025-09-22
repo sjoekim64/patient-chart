@@ -399,10 +399,40 @@ export const PatientForm: React.FC<PatientFormProps> = ({ initialData, onSubmit,
   ) => {
       setFormData(prev => {
           const currentValues = (prev.reviewOfSystems[subSection] as any)[field] as string[];
+
+          // Special rule: For throat/nose symptoms, 'normal' is exclusive
+          if (subSection === 'throatNose' && field === 'symptoms') {
+              let updatedValues: string[] = currentValues;
+
+              if (checked) {
+                  if (value === 'normal') {
+                      // Selecting 'normal' clears all others
+                      updatedValues = ['normal'];
+                  } else {
+                      // Selecting any non-normal removes 'normal' if present
+                      updatedValues = [...currentValues.filter(v => v !== 'normal'), value];
+                  }
+              } else {
+                  // Unchecking simply removes the value
+                  updatedValues = currentValues.filter(item => item !== value);
+              }
+
+              return {
+                  ...prev,
+                  reviewOfSystems: {
+                      ...prev.reviewOfSystems,
+                      throatNose: {
+                          ...prev.reviewOfSystems.throatNose,
+                          symptoms: updatedValues,
+                      },
+                  },
+              };
+          }
+
           const newValues = checked
               ? [...currentValues, value]
               : currentValues.filter(item => item !== value);
-          
+
           return {
               ...prev,
               reviewOfSystems: {
@@ -702,7 +732,7 @@ JSON Output Structure:
   "tcmDiagnosis": "Provide the primary TCM Syndrome/Differentiation diagnosis (e.g., Liver Qi Stagnation, Spleen Qi Deficiency with Dampness), grounded in 'Chinese Acupuncture and Moxibustion' principles.",
   "treatmentPrinciple": "State the clear treatment principle (e.g., Soothe the Liver, tonify Spleen Qi, resolve dampness).",
   "acupuncturePoints": "Suggest primary acupuncture points for EACH of the selected methods: '${methodsForPrompt.join(', ')}'. Your response for this field MUST be a single string. List ONLY the point names/groups. Do NOT include any descriptions or explanations. Structure the output with each method as a heading on a new line, using '\\n' as a separator. For example: 'Saam: HT8, LR1 (sedate); LU8, SP2 (tonify)\\nTCM Body: ST36, SP6, LI4, LV3'. For 'Saam', provide the tonification/sedation combination. For 'Master Tung', list Tung's points. For 'Five Element', list constitutional points. For 'Trigger Point', list relevant muscles or Ashi points. For 'TCM Body', list standard channel points.",
-  "herbalTreatment": "Recommend a classic herbal formula based on 'Donguibogam' (동의보감) and 'Bangyakhappyeon' (방약합편). Respond with only the formula name (e.g., 'Du Huo Ji Sheng Tang').",
+  "herbalTreatment": "Recommend a classic herbal formula using 'Bangyakhappyeon' (방약합편) as the PRIMARY reference. If an exact match cannot be determined, then fallback to 'Donguibogam' (동의보감). Respond with ONLY the formula name (e.g., 'Du Huo Ji Sheng Tang'). Do not include explanations.",
   "otherTreatment": {
     "recommendation": "Suggest only the single most relevant treatment from this list: None, Tui-Na, Acupressure, Moxa, Cupping, Electro Acupuncture, Heat Pack, Auricular Acupuncture, Other. If 'Other' or 'Auricular Acupuncture', specify what it is (e.g., 'Auricular Acupuncture: Shen Men, Liver').",
     "explanation": "Briefly explain why you recommend it."
@@ -829,22 +859,29 @@ Instructions:
   
   const handleOtherTreatmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    
-    setFormData(prev => {
-        const baseCpt = isFollowUp ? ['99212', '97813', '97814'] : ['99202', '97810', '97811', '97026'];
-        const manualCode = '97140';
-        
-        let newCptSet = new Set(baseCpt);
 
-        if (value !== 'Acupressure' && value !== 'None' && value !== '') {
-            newCptSet.add(manualCode);
-        }
-        
+    setFormData(prev => {
+        // Base E/M and acupuncture codes per visit type
+        const baseCpt = isFollowUp
+          ? ['99212']
+          : ['99202'];
+
+        // Acupuncture codes: electro vs non-electro
+        const acupunctureCodes = isFollowUp
+          ? (prev.diagnosisAndTreatment.selectedTreatment === 'Electro Acupuncture' ? ['97813', '97814'] : ['97810', '97811'])
+          : (prev.diagnosisAndTreatment.selectedTreatment === 'Electro Acupuncture' ? ['97813', '97814'] : ['97810', '97811']);
+
+        // Manual therapy 97140 applies only for Tui-Na, Acupressure, Cupping
+        const manualEligible = value === 'Tui-Na' || value === 'Acupressure' || value === 'Cupping';
+
+        const newCptSet = new Set<string>([...baseCpt, ...acupunctureCodes]);
+        if (manualEligible) newCptSet.add('97140');
+
+        // Preserve any previously entered custom codes that are not part of our managed sets
+        const managed = new Set<string>([...baseCpt, ...acupunctureCodes, '97140']);
         const existingCpt = prev.diagnosisAndTreatment.cpt.split(',').map(c => c.trim()).filter(Boolean);
         existingCpt.forEach(code => {
-            if (!baseCpt.includes(code) && code !== manualCode) {
-                newCptSet.add(code);
-            }
+            if (!managed.has(code)) newCptSet.add(code);
         });
 
         return {
@@ -856,7 +893,7 @@ Instructions:
             }
         };
     });
-};
+  };
 
   const handleEightPrincipleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
