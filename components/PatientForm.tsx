@@ -203,6 +203,7 @@ export const PatientForm: React.FC<PatientFormProps> = ({ initialData, onSubmit,
   const [isGeneratingHpi, setIsGeneratingHpi] = useState(false);
   const [isDiagnosing, setIsDiagnosing] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [needsHpiRegeneration, setNeedsHpiRegeneration] = useState(false);
   
   const isFollowUp = useMemo(() => formData.chartType === 'follow-up', [formData.chartType]);
   const isEditing = useMemo(() => mode === 'edit', [mode]);
@@ -221,6 +222,22 @@ export const PatientForm: React.FC<PatientFormProps> = ({ initialData, onSubmit,
       }
     }
   }, [formData, initialData, hasChanges]);
+
+  // Track changes to selected complaints to detect when HPI needs regeneration
+  useEffect(() => {
+    const initialComplaints = initialData.chiefComplaint.selectedComplaints;
+    const currentComplaints = formData.chiefComplaint.selectedComplaints;
+    const initialOtherComplaint = initialData.chiefComplaint.otherComplaint;
+    const currentOtherComplaint = formData.chiefComplaint.otherComplaint;
+    
+    const complaintsChanged = 
+      JSON.stringify(initialComplaints) !== JSON.stringify(currentComplaints) ||
+      initialOtherComplaint !== currentOtherComplaint;
+    
+    if (complaintsChanged && formData.chiefComplaint.presentIllness) {
+      setNeedsHpiRegeneration(true);
+    }
+  }, [formData.chiefComplaint.selectedComplaints, formData.chiefComplaint.otherComplaint, initialData.chiefComplaint.selectedComplaints, initialData.chiefComplaint.otherComplaint, formData.chiefComplaint.presentIllness]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -249,6 +266,53 @@ export const PatientForm: React.FC<PatientFormProps> = ({ initialData, onSubmit,
     });
     return Array.from(suggestions);
   }, [formData.chiefComplaint.selectedComplaints]);
+
+  // Clean up location details and location text when complaints change
+  useEffect(() => {
+    const currentValidLocations = new Set<string>();
+    formData.chiefComplaint.selectedComplaints.forEach(complaint => {
+      if (complaintLocationMap[complaint]) {
+        complaintLocationMap[complaint].forEach(loc => currentValidLocations.add(loc));
+      }
+    });
+
+    // Remove invalid location details
+    const validLocationDetails = formData.chiefComplaint.locationDetails.filter(detail => 
+      currentValidLocations.has(detail)
+    );
+
+    // Clean up location text field
+    let cleanedLocationText = formData.chiefComplaint.location;
+    if (cleanedLocationText) {
+      const locationParts = cleanedLocationText.split(',').map(p => p.trim()).filter(Boolean);
+      const allPossibleSuggestions = new Set<string>();
+      Object.values(complaintLocationMap).forEach(v => v.forEach(s => allPossibleSuggestions.add(s)));
+      
+      // Remove invalid suggestion-based locations from text
+      const validLocationParts = locationParts.filter(part => {
+        // Keep manual text entries that are not from the suggestion list
+        if (!allPossibleSuggestions.has(part)) return true;
+        // Only keep suggestion-based locations that are valid for current complaints
+        return currentValidLocations.has(part);
+      });
+      
+      cleanedLocationText = validLocationParts.join(', ');
+    }
+
+    const hasLocationDetailsChanged = validLocationDetails.length !== formData.chiefComplaint.locationDetails.length;
+    const hasLocationTextChanged = cleanedLocationText !== formData.chiefComplaint.location;
+
+    if (hasLocationDetailsChanged || hasLocationTextChanged) {
+      setFormData(prev => ({
+        ...prev,
+        chiefComplaint: {
+          ...prev.chiefComplaint,
+          locationDetails: validLocationDetails,
+          location: cleanedLocationText
+        }
+      }));
+    }
+  }, [formData.chiefComplaint.selectedComplaints, formData.chiefComplaint.locationDetails, formData.chiefComplaint.location]);
 
   const handleNestedChange = (
     section: keyof PatientData,
@@ -501,16 +565,20 @@ export const PatientForm: React.FC<PatientFormProps> = ({ initialData, onSubmit,
       ? `The patient is a [age]-year-old [sex] who returns for a follow-up regarding...`
       : `The patient is a [age]-year-old [sex] who presents with...`;
 
-    let prompt = `You are a medical scribe creating a "History of Present Illness" (HPI) narrative. Synthesize the following patient data into a clinical paragraph. Start with the patient's age and sex.
+    let prompt = `You are a medical scribe creating a "History of Present Illness" (HPI) narrative. 
+
+**CRITICAL REQUIREMENT: You must ONLY include the EXACT symptoms listed in the "Current Symptoms" section below. Do NOT add any symptoms that are not explicitly listed.**
 
 **Patient Demographics:**
 - Age: ${age}
 - Sex: ${sex === 'M' ? 'Male' : sex === 'F' ? 'Female' : 'Not specified'}
 
-**Complaint Details:**
+**Current Symptoms (MUST include ONLY these):**
+${allComplaints || 'No specific complaints listed'}
+
+**Current Complaint Details:**
 `;
 
-    if (allComplaints) prompt += `- Chief Complaint: ${allComplaints}\n`;
     if (locationDisplay) prompt += `- Location: ${locationDisplay}\n`;
     if (onsetDisplay) prompt += `- Onset: Approximately ${onsetDisplay} ago\n`;
     if (qualityDisplay) prompt += `- Pain Quality: ${qualityDisplay}\n`;
@@ -524,20 +592,28 @@ export const PatientForm: React.FC<PatientFormProps> = ({ initialData, onSubmit,
     if (chiefComplaint.remark) prompt += `- Remarks: ${chiefComplaint.remark}\n`;
     
     prompt += `
-**Instructions:**
-- Write a coherent paragraph in a professional, clinical tone.
-- Start with an opening sentence like: "${openingSentence}"
-- Weave the details into a narrative, not just a list. For example, instead of "Onset: 3 weeks ago", write "The symptoms began approximately 3 weeks ago."
-- Do not use markdown or bullet points in your final output.
+**ABSOLUTE REQUIREMENTS:**
+1. ONLY mention the symptoms listed in "Current Symptoms" above
+2. If a symptom is NOT in the "Current Symptoms" list, DO NOT mention it
+3. Do NOT infer or add symptoms like "back pain", "lower back", "lumbar pain" unless explicitly listed in "Current Symptoms"
+4. Write a coherent paragraph in a professional, clinical tone
+5. Start with an opening sentence like: "${openingSentence}"
+6. Weave the details into a narrative, not just a list
+7. Do not use markdown or bullet points in your final output
+
+**Example of what NOT to do:** If "Current Symptoms" only lists "Neck Pain, Shoulder Pain" but you mention "back pain" or "lower back", that is WRONG.
 
 Generate the HPI paragraph below:
 `;
 
     try {
         console.log("Starting HPI generation...");
-        console.log("Using API Key: AIzaSyANTMkQtJzhKwxp9sPWdpHHqI9M4RumzRY");
+        console.log("Current selected complaints:", chiefComplaint.selectedComplaints);
+        console.log("Other complaint:", chiefComplaint.otherComplaint);
+        console.log("All complaints string:", allComplaints);
+        console.log("Using API Key:", process.env.GEMINI_API_KEY ? "Present" : "Missing");
         
-        const ai = new GoogleGenAI({ apiKey: "AIzaSyANTMkQtJzhKwxp9sPWdpHHqI9M4RumzRY" });
+        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "AIzaSyANTMkQtJzhKwxp9sPWdpHHqI9M4RumzRY" });
         console.log("GoogleGenAI instance created");
         
         const response = await ai.models.generateContent({
@@ -549,6 +625,23 @@ Generate the HPI paragraph below:
 
         const generatedText = response.text;
         
+        // Validate that the generated text only includes current symptoms
+        const currentSymptoms = [...chiefComplaint.selectedComplaints, chiefComplaint.otherComplaint].filter(Boolean);
+        const generatedLower = generatedText.toLowerCase();
+        
+        // Check for common symptoms that might be incorrectly included
+        const commonSymptoms = ['back pain', 'lower back', 'lumbar', 'spine', 'backache'];
+        const incorrectlyIncluded = commonSymptoms.filter(symptom => 
+            generatedLower.includes(symptom) && 
+            !currentSymptoms.some(current => current.toLowerCase().includes('back'))
+        );
+        
+        if (incorrectlyIncluded.length > 0) {
+            console.warn('Generated text may include symptoms not in current complaints:', incorrectlyIncluded);
+            console.warn('Current symptoms:', currentSymptoms);
+            console.warn('Generated text:', generatedText);
+        }
+        
         setFormData(prev => ({
             ...prev,
             chiefComplaint: {
@@ -556,6 +649,9 @@ Generate the HPI paragraph below:
                 presentIllness: generatedText.trim(),
             }
         }));
+        
+        // Reset the regeneration flag after successful generation
+        setNeedsHpiRegeneration(false);
 
     } catch (error) {
         console.error("Error generating Present Illness text:", error);
@@ -623,7 +719,7 @@ Instructions:
         console.log("API Key for diagnosis:", process.env.API_KEY ? "Present" : "Missing");
         console.log("API Key length for diagnosis:", process.env.API_KEY?.length);
         
-        const ai = new GoogleGenAI({ apiKey: "AIzaSyANTMkQtJzhKwxp9sPWdpHHqI9M4RumzRY" });
+        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "AIzaSyANTMkQtJzhKwxp9sPWdpHHqI9M4RumzRY" });
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
             contents: prompt,
@@ -980,7 +1076,7 @@ Instructions:
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <InputField label="Location" id="location" name="location" value={formData.chiefComplaint.location} onChange={handleComplaintChange} placeholder="Describe location details" />
-              {activeLocationSuggestions.length > 0 && (
+              {activeLocationSuggestions.length > 0 && formData.chiefComplaint.selectedComplaints.includes('Back Pain') && (
                 <div className="mt-2">
                   <label className="block text-xs font-medium text-gray-500 mb-1">Suggestions:</label>
                   <div className="flex flex-wrap gap-2">
@@ -1097,14 +1193,32 @@ Instructions:
       {!isFollowUp && (
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <div className="flex justify-between items-center border-b pb-4 mb-6">
-                <h2 className="text-2xl font-semibold text-gray-800">Present Illness</h2>
+                <div>
+                  <h2 className="text-2xl font-semibold text-gray-800">Present Illness</h2>
+                  {needsHpiRegeneration && (
+                    <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0">
+                          <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <p className="text-sm text-yellow-700">
+                            <strong>주의:</strong> 주증상이 변경되었습니다. Present Illness를 다시 생성하시기 바랍니다.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <button 
                   type="button" 
                   onClick={handleGenerateHpi}
                   className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:bg-blue-400 disabled:cursor-not-allowed"
                   disabled={isGeneratingHpi || isDiagnosing}
                 >
-                  {isGeneratingHpi ? 'Generating...' : 'Regenerate with AI'}
+                  {isGeneratingHpi ? 'Generating...' : needsHpiRegeneration ? 'Update with AI' : 'Regenerate with AI'}
                 </button>
             </div>
              <div>

@@ -111,7 +111,7 @@ export const getNewPatientSample = (clinicInfo?: any): PatientData => ({
   }
 });
 
-// 재방문 환자 샘플 데이터
+// 재방문 환자 샘플 데이터 1 - 목/어깨 통증
 export const getFollowUpPatientSample = (clinicInfo?: any): PatientData => ({
   chartType: 'follow-up',
   clinicName: clinicInfo?.clinicName || 'East-West Wellness Center',
@@ -221,6 +221,226 @@ export const getFollowUpPatientSample = (clinicInfo?: any): PatientData => ({
   }
 });
 
+// 재방문 환자 샘플 데이터 2 - 요통
+export const getFollowUpPatientSample2 = (clinicInfo?: any): PatientData => ({
+  chartType: 'follow-up',
+  clinicName: clinicInfo?.clinicName || 'East-West Wellness Center',
+  clinicLogo: clinicInfo?.clinicLogo || '',
+  fileNo: 'CH-54321',
+  name: 'Sarah Johnson',
+  date: new Date().toISOString().split('T')[0],
+  address: '789 Healing Lane, Unit 5, Therapy Town, ST 54321',
+  phone: '(555) 987-6543',
+  occupation: 'Nurse',
+  dob: '1988-07-14',
+  age: '36',
+  sex: 'F',
+  heightFt: '5',
+  heightIn: '4',
+  weight: '135',
+  temp: '98.2',
+  bpSystolic: '115',
+  bpDiastolic: '75',
+  heartRate: '68',
+  heartRhythm: 'Normal',
+  lungRate: '18',
+  lungSound: 'Clear',
+  chiefComplaint: {
+    selectedComplaints: ['Back Pain'],
+    otherComplaint: '',
+    location: 'Lower back, bilateral',
+    locationDetails: ['Lower'],
+    onsetValue: '',
+    onsetUnit: '',
+    provocation: ['Lifting', 'Bending'],
+    provocationOther: 'Patient works 12-hour shifts as a nurse',
+    palliation: ['Rest', 'Heat Pack'],
+    palliationOther: '',
+    quality: ['Dull', 'Aching'],
+    qualityOther: '',
+    regionRadiation: 'Occasionally radiates to both hips',
+    severityScore: '3',
+    severityDescription: 'Slight',
+    frequency: 'Intermittent',
+    timing: 'Worse after long shifts and in the morning',
+    possibleCause: ['Overwork / Repetitive Labor'],
+    possibleCauseOther: '',
+    remark: 'Significant improvement since initial treatment. Patient reports 70% reduction in pain intensity. Can now work full shifts without major discomfort. Sleep quality has improved dramatically. Patient is very pleased with the results and wants to continue maintenance treatments.',
+    presentIllness: '',
+    westernMedicalDiagnosis: '',
+  },
+  medicalHistory: {
+    pastMedicalHistory: [],
+    pastMedicalHistoryOther: '',
+    medication: ['NSAIDs'],
+    medicationOther: 'Ibuprofen as needed (rarely used now)',
+    familyHistory: ['Diabetes'],
+    familyHistoryOther: '',
+    allergy: [],
+    allergyOther: '',
+  },
+  reviewOfSystems: {
+    coldHot: { sensation: 'normal', parts: [], other: '' },
+    sleep: { hours: '7-8', quality: ['O.K.'], issues: [], other: '' },
+    sweat: { present: 'no', time: '', parts: [], other: '' },
+    eye: { symptoms: ['normal'], other: '' },
+    mouthTongue: { symptoms: 'normal', taste: 'normal', other: '' },
+    throatNose: { symptoms: ['normal'], mucusColor: [], other: '' },
+    edema: { present: 'no', parts: [], other: '' },
+    drink: { thirsty: 'normal', preference: 'normal', amount: '', other: '' },
+    digestion: { symptoms: ['good'], other: '' },
+    appetiteEnergy: { appetite: 'good', energy: '8', other: '' },
+    stool: { frequencyValue: '1', frequencyUnit: 'day', form: 'normal', color: 'brown', symptoms: [], other: '' },
+    urine: { frequencyDay: '5-6', frequencyNight: '0-1', amount: 'normal', color: 'pale yellow', symptoms: [], other: '' },
+    menstruation: { status: 'regular', menopauseAge: '', lmp: '2024-07-15', cycleLength: '30', duration: '4', amount: 'normal', color: 'fresh red', clots: 'no', pain: 'no', painDetails: '', pms: [], other: '' },
+    discharge: { present: 'no', symptoms: [], other: '' }
+  },
+  tongue: {
+    body: { 
+      color: 'Pink', colorModifiers: [], 
+      shape: 'Normal', shapeModifiers: [], 
+      locations: [], 
+      locationComments: '' 
+    },
+    coating: { color: 'White', quality: ['Thin'], notes: '' },
+  },
+  pulse: {
+    overall: ['Normal', 'Slightly Deep'],
+    notes: 'Kidney pulse shows improvement. Less deep compared to initial visit.',
+  },
+  diagnosisAndTreatment: {
+    eightPrinciples: { exteriorInterior: 'Interior', heatCold: 'Normal', excessDeficient: 'Deficient', yangYin: 'Yang' },
+    etiology: 'Kidney Yang deficiency improving with treatment. Some residual weakness from overwork.',
+    tcmDiagnosis: 'Kidney Yang Deficiency (Improving)',
+    treatmentPrinciple: 'Continue to tonify Kidney Yang, strengthen the lower back, and improve circulation.',
+    acupunctureMethod: ['TCM Body'],
+    acupunctureMethodOther: '',
+    acupuncturePoints: 'UB23, UB40, ST36, SP6, KI3, GV4, Ashi points',
+    herbalTreatment: 'Du Huo Ji Sheng Tang',
+    selectedTreatment: 'Moxa',
+    otherTreatmentText: '',
+    icd: 'M54.5 (Low back pain)',
+    cpt: '99212, 97813, 97814',
+    therapistName: clinicInfo?.therapistName || 'John Smith, L.Ac.',
+    therapistLicNo: clinicInfo?.therapistLicenseNo || '12345',
+  },
+  respondToCare: {
+    status: 'Improved',
+    improvedDays: '7',
+    notes: 'Significant improvement since initial treatment. Patient reports 70% reduction in pain intensity. Can now work full shifts without major discomfort. Sleep quality has improved dramatically. Patient is very pleased with the results and wants to continue maintenance treatments.',
+  }
+});
+
+// 재방문 환자 샘플 데이터 3 - 불면증/스트레스
+export const getFollowUpPatientSample3 = (clinicInfo?: any): PatientData => ({
+  chartType: 'follow-up',
+  clinicName: clinicInfo?.clinicName || 'East-West Wellness Center',
+  clinicLogo: clinicInfo?.clinicLogo || '',
+  fileNo: 'CH-98765',
+  name: 'Michael Chen',
+  date: new Date().toISOString().split('T')[0],
+  address: '321 Balance Blvd, Suite 10, Harmony Heights, ST 67890',
+  phone: '(555) 456-7890',
+  occupation: 'Software Developer',
+  dob: '1992-11-08',
+  age: '32',
+  sex: 'M',
+  heightFt: '5',
+  heightIn: '10',
+  weight: '165',
+  temp: '98.6',
+  bpSystolic: '125',
+  bpDiastolic: '82',
+  heartRate: '75',
+  heartRhythm: 'Normal',
+  lungRate: '17',
+  lungSound: 'Clear',
+  chiefComplaint: {
+    selectedComplaints: ['Insomnia', 'Anxiety'],
+    otherComplaint: '',
+    location: 'Generalized',
+    locationDetails: [],
+    onsetValue: '',
+    onsetUnit: '',
+    provocation: ['Work Stress', 'Deadlines'],
+    provocationOther: 'High-pressure software development environment',
+    palliation: ['Meditation', 'Exercise'],
+    palliationOther: '',
+    quality: ['Restless', 'Worried'],
+    qualityOther: '',
+    regionRadiation: '',
+    severityScore: '5',
+    severityDescription: 'Moderate',
+    frequency: 'Daily',
+    timing: 'Worse in the evening and before sleep',
+    possibleCause: ['Stress', 'Overwork / Repetitive Labor'],
+    possibleCauseOther: '',
+    remark: 'Patient reports 60% improvement in sleep quality and anxiety levels. Can now fall asleep within 30 minutes (previously 2+ hours). Work performance has improved. Still experiences occasional stress but feels much more equipped to handle it. Patient is committed to continuing treatment.',
+    presentIllness: '',
+    westernMedicalDiagnosis: '',
+  },
+  medicalHistory: {
+    pastMedicalHistory: [],
+    pastMedicalHistoryOther: '',
+    medication: [],
+    medicationOther: '',
+    familyHistory: ['Anxiety', 'Depression'],
+    familyHistoryOther: '',
+    allergy: [],
+    allergyOther: '',
+  },
+  reviewOfSystems: {
+    coldHot: { sensation: 'normal', parts: [], other: '' },
+    sleep: { hours: '6-7', quality: ['O.K.'], issues: ['hard to fall asleep'], other: 'Much improved from initial visit' },
+    sweat: { present: 'no', time: '', parts: [], other: '' },
+    eye: { symptoms: ['normal'], other: '' },
+    mouthTongue: { symptoms: 'normal', taste: 'normal', other: '' },
+    throatNose: { symptoms: ['normal'], mucusColor: [], other: '' },
+    edema: { present: 'no', parts: [], other: '' },
+    drink: { thirsty: 'normal', preference: 'normal', amount: '', other: '' },
+    digestion: { symptoms: ['good'], other: '' },
+    appetiteEnergy: { appetite: 'good', energy: '7', other: '' },
+    stool: { frequencyValue: '1', frequencyUnit: 'day', form: 'normal', color: 'brown', symptoms: [], other: '' },
+    urine: { frequencyDay: '4-5', frequencyNight: '1', amount: 'normal', color: 'pale yellow', symptoms: [], other: '' },
+    menstruation: { status: '', menopauseAge: '', lmp: '', cycleLength: '', duration: '', amount: 'normal', color: 'fresh red', clots: 'no', pain: 'no', painDetails: '', pms: [], other: '' },
+    discharge: { present: 'no', symptoms: [], other: '' }
+  },
+  tongue: {
+    body: { 
+      color: 'Pink', colorModifiers: ['Red Tip'], 
+      shape: 'Normal', shapeModifiers: [], 
+      locations: ['Heart (Tip)'], 
+      locationComments: 'Heart (Tip): slightly red, improving' 
+    },
+    coating: { color: 'White', quality: ['Thin'], notes: '' },
+  },
+  pulse: {
+    overall: ['Rapid', 'Slightly Wiry'],
+    notes: 'Heart pulse less rapid than initial visit. Some improvement in wiry quality.',
+  },
+  diagnosisAndTreatment: {
+    eightPrinciples: { exteriorInterior: 'Interior', heatCold: 'Heat', excessDeficient: 'Excess', yangYin: 'Yang' },
+    etiology: 'Heart Fire and Liver Qi stagnation improving with treatment. Some residual heat from work stress.',
+    tcmDiagnosis: 'Heart Fire, Liver Qi Stagnation (Improving)',
+    treatmentPrinciple: 'Continue to clear Heart Fire, soothe Liver Qi, and calm the spirit.',
+    acupunctureMethod: ['TCM Body'],
+    acupunctureMethodOther: '',
+    acupuncturePoints: 'HT7, PC6, LV3, GB20, ST36, SP6, Yintang, Anmian',
+    herbalTreatment: 'Gan Mai Da Zao Tang',
+    selectedTreatment: 'None',
+    otherTreatmentText: '',
+    icd: 'F51.01 (Primary insomnia), F41.9 (Anxiety disorder, unspecified)',
+    cpt: '99212, 97813, 97814',
+    therapistName: clinicInfo?.therapistName || 'John Smith, L.Ac.',
+    therapistLicNo: clinicInfo?.therapistLicenseNo || '12345',
+  },
+  respondToCare: {
+    status: 'Improved',
+    improvedDays: '10',
+    notes: 'Patient reports 60% improvement in sleep quality and anxiety levels. Can now fall asleep within 30 minutes (previously 2+ hours). Work performance has improved. Still experiences occasional stress but feels much more equipped to handle it. Patient is committed to continuing treatment.',
+  }
+});
+
 // 샘플 데이터 초기화 함수
 export const initializeSampleData = async (userId: string, clinicInfo?: any) => {
   const { database } = await import('./database');
@@ -229,26 +449,52 @@ export const initializeSampleData = async (userId: string, clinicInfo?: any) => 
     // 기존 샘플 데이터가 있는지 확인
     const existingCharts = await database.getPatientCharts(userId);
     const hasNewSample = existingCharts.some(chart => chart.fileNo === 'CH-12345');
-    const hasFollowUpSample = existingCharts.some(chart => chart.fileNo === 'CH-67890');
+    const hasFollowUpSample1 = existingCharts.some(chart => chart.fileNo === 'CH-67890');
+    const hasFollowUpSample2 = existingCharts.some(chart => chart.fileNo === 'CH-54321');
+    const hasFollowUpSample3 = existingCharts.some(chart => chart.fileNo === 'CH-98765');
+    
+    let samplesAdded = 0;
     
     // 신규환자 샘플 추가
     if (!hasNewSample) {
       const newPatientSample = getNewPatientSample(clinicInfo);
       await database.savePatientChart(userId, newPatientSample);
       console.log('신규환자 샘플 데이터가 추가되었습니다.');
+      samplesAdded++;
     }
     
-    // 재방문 환자 샘플 추가
-    if (!hasFollowUpSample) {
-      const followUpSample = getFollowUpPatientSample(clinicInfo);
-      await database.savePatientChart(userId, followUpSample);
-      console.log('재방문 환자 샘플 데이터가 추가되었습니다.');
+    // 재방문 환자 샘플 1 (목/어깨 통증) 추가
+    if (!hasFollowUpSample1) {
+      const followUpSample1 = getFollowUpPatientSample(clinicInfo);
+      await database.savePatientChart(userId, followUpSample1);
+      console.log('재방문 환자 샘플 데이터 1 (목/어깨 통증)이 추가되었습니다.');
+      samplesAdded++;
     }
     
-    return { newSampleAdded: !hasNewSample, followUpSampleAdded: !hasFollowUpSample };
+    // 재방문 환자 샘플 2 (요통) 추가
+    if (!hasFollowUpSample2) {
+      const followUpSample2 = getFollowUpPatientSample2(clinicInfo);
+      await database.savePatientChart(userId, followUpSample2);
+      console.log('재방문 환자 샘플 데이터 2 (요통)이 추가되었습니다.');
+      samplesAdded++;
+    }
+    
+    // 재방문 환자 샘플 3 (불면증/스트레스) 추가
+    if (!hasFollowUpSample3) {
+      const followUpSample3 = getFollowUpPatientSample3(clinicInfo);
+      await database.savePatientChart(userId, followUpSample3);
+      console.log('재방문 환자 샘플 데이터 3 (불면증/스트레스)이 추가되었습니다.');
+      samplesAdded++;
+    }
+    
+    return { 
+      newSampleAdded: !hasNewSample, 
+      followUpSampleAdded: !hasFollowUpSample1 || !hasFollowUpSample2 || !hasFollowUpSample3,
+      totalSamplesAdded: samplesAdded
+    };
   } catch (error) {
     console.error('샘플 데이터 초기화 실패:', error);
-    return { newSampleAdded: false, followUpSampleAdded: false };
+    return { newSampleAdded: false, followUpSampleAdded: false, totalSamplesAdded: 0 };
   }
 };
 

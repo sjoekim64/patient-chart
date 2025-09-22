@@ -9,7 +9,7 @@ import { AdminRoute } from './components/AdminRoute';
 import { useAdminMode } from './hooks/useAdminMode';
 import type { PatientData } from './types.ts';
 import { database } from './lib/database';
-import { initializeSampleData, getNewPatientSample, getFollowUpPatientSample, initializeTestUser } from './lib/sampleData';
+import { initializeSampleData, getNewPatientSample, getFollowUpPatientSample, getFollowUpPatientSample2, getFollowUpPatientSample3, initializeTestUser } from './lib/sampleData';
 
 
 const getNewPatientState = (chartType: 'new' | 'follow-up', clinicInfo?: any): PatientData => {
