@@ -48,7 +48,7 @@ export interface ReviewOfSystemsData {
   };
   sweat: {
     present: 'yes' | 'no' | '';
-    time: 'night' | 'day' | 'all time' | '';
+    time: string[];
     parts: string[];
     other: string;
   };
@@ -57,8 +57,8 @@ export interface ReviewOfSystemsData {
     other: string;
   };
   mouthTongue: {
-    symptoms: 'dry' | 'normal' | 'wet (sputum, phlegm)' | '';
-    taste: 'sour' | 'bitter' | 'sweet' | 'acrid' | 'salty' | 'bland' | '';
+    symptoms: string[];
+    taste: string[];
     other: string;
   };
   throatNose: {
@@ -125,26 +125,17 @@ export interface ReviewOfSystemsData {
 
 export interface TongueData {
     body: {
-        color: string;
-        colorModifiers: string[];
-        shape: string;
-        shapeModifiers: string[];
+        color: string[];
+        shape: string[];
         locations: string[];
-        locationComments: string;
+        locationComments: { [key: string]: string };
     };
     coating: {
-        color: string;
+        color: string[];
         quality: string[];
         notes: string;
     };
 }
-
-export interface PulseData {
-  overall: string[];
-  notes: string;
-}
-
-export type AcupunctureMethod = 'TCM Body' | 'Saam' | 'Master Tung' | 'Five Element' | 'Trigger Point' | 'Other';
 
 export interface DiagnosisAndTreatmentData {
   eightPrinciples: {
@@ -156,8 +147,6 @@ export interface DiagnosisAndTreatmentData {
   etiology: string;
   tcmDiagnosis: string;
   treatmentPrinciple: string;
-  acupunctureMethod: AcupunctureMethod[];
-  acupunctureMethodOther?: string;
   acupuncturePoints: string;
   herbalTreatment: string;
   selectedTreatment: 'None' | 'Tui-Na' | 'Acupressure' | 'Moxa' | 'Cupping' | 'Electro Acupuncture' | 'Heat Pack' | 'Auricular Acupuncture' | 'Other' | '';
@@ -201,7 +190,6 @@ export interface PatientData {
   medicalHistory: MedicalHistoryData;
   reviewOfSystems: ReviewOfSystemsData;
   tongue: TongueData;
-  pulse: PulseData;
   diagnosisAndTreatment: DiagnosisAndTreatmentData;
   respondToCare?: RespondToCareData;
 }

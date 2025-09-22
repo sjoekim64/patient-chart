@@ -1,5 +1,5 @@
 {
-  "name": "all comp-Patient Chart Input",
+  "name": "Patient Chart Input",
   "description": "A web application to input patient vitals and information, and generate a printable chart. The app allows for easy data entry and provides a clean, letter-sized output for records.",
   "requestFramePermissions": []
 }
