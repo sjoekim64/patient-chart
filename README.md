@@ -24,7 +24,7 @@ A modern digital patient record system built with React, TypeScript, and Vite.
 ### Prerequisites
 
 - Node.js 18 or higher
-- npm or pnpm
+- npm
 
 ### Installation
 
