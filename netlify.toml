@@ -4,7 +4,7 @@
 
 [build.environment]
   NODE_VERSION = "22"
-  NPM_FLAGS = "--prefer-offline --no-audit"
+  NPM_FLAGS = "--prefer-offline --no-audit --force"
   CI = "true"
   # Environment variables for build (set these in Netlify dashboard)
   GEMINI_API_KEY = ""
