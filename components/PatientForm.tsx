@@ -400,38 +400,21 @@ export const PatientForm: React.FC<PatientFormProps> = ({ initialData, onSubmit,
       setFormData(prev => {
           const currentValues = (prev.reviewOfSystems[subSection] as any)[field] as string[];
 
-          // Special rule: For throat/nose symptoms, 'normal' is exclusive
-          if (subSection === 'throatNose' && field === 'symptoms') {
-              let updatedValues: string[] = currentValues;
+          // Universal rule: 'normal' is exclusive across all sections
+          let updatedValues: string[] = currentValues;
 
-              if (checked) {
-                  if (value === 'normal') {
-                      // Selecting 'normal' clears all others
-                      updatedValues = ['normal'];
-                  } else {
-                      // Selecting any non-normal removes 'normal' if present
-                      updatedValues = [...currentValues.filter(v => v !== 'normal'), value];
-                  }
+          if (checked) {
+              if (value === 'normal') {
+                  // Selecting 'normal' clears all others
+                  updatedValues = ['normal'];
               } else {
-                  // Unchecking simply removes the value
-                  updatedValues = currentValues.filter(item => item !== value);
+                  // Selecting any non-normal removes 'normal' if present
+                  updatedValues = [...currentValues.filter(v => v !== 'normal'), value];
               }
-
-              return {
-                  ...prev,
-                  reviewOfSystems: {
-                      ...prev.reviewOfSystems,
-                      throatNose: {
-                          ...prev.reviewOfSystems.throatNose,
-                          symptoms: updatedValues,
-                      },
-                  },
-              };
+          } else {
+              // Unchecking simply removes the value
+              updatedValues = currentValues.filter(item => item !== value);
           }
-
-          const newValues = checked
-              ? [...currentValues, value]
-              : currentValues.filter(item => item !== value);
 
           return {
               ...prev,
@@ -439,7 +422,7 @@ export const PatientForm: React.FC<PatientFormProps> = ({ initialData, onSubmit,
                   ...prev.reviewOfSystems,
                   [subSection]: {
                       ...prev.reviewOfSystems[subSection],
-                      [field]: newValues,
+                      [field]: updatedValues,
                   }
               }
           };
@@ -460,15 +443,28 @@ export const PatientForm: React.FC<PatientFormProps> = ({ initialData, onSubmit,
   };
 
   const handleTongueBodyArrayChange = (
-    field: 'colorModifiers' | 'shapeModifiers' | 'locations',
+    field: 'colorModifiers' | 'shapeModifiers' | 'locations' | 'shape',
     value: string,
     checked: boolean
     ) => {
         setFormData(prev => {
             const currentValues = prev.tongue.body[field] || [];
-            const newValues = checked
-              ? [...currentValues, value]
-              : currentValues.filter(item => item !== value);
+            
+            // Universal rule: 'Normal' is exclusive across all tongue body fields
+            let updatedValues: string[] = currentValues;
+
+            if (checked) {
+                if (value === 'Normal') {
+                    // Selecting 'Normal' clears all others
+                    updatedValues = ['Normal'];
+                } else {
+                    // Selecting any non-Normal removes 'Normal' if present
+                    updatedValues = [...currentValues.filter(v => v !== 'Normal'), value];
+                }
+            } else {
+                // Unchecking simply removes the value
+                updatedValues = currentValues.filter(item => item !== value);
+            }
 
             return {
                 ...prev,
@@ -476,7 +472,7 @@ export const PatientForm: React.FC<PatientFormProps> = ({ initialData, onSubmit,
                     ...prev.tongue,
                     body: {
                         ...prev.tongue.body,
-                        [field]: newValues
+                        [field]: updatedValues
                     }
                 }
             }
@@ -1590,8 +1586,8 @@ Instructions:
                   <CheckboxGroup options={tongueBodyColorModifierOptions} selected={formData.tongue.body.colorModifiers} onChange={(val, checked) => handleTongueBodyArrayChange('colorModifiers', val, checked)} gridCols="grid-cols-2 sm:grid-cols-4 lg:grid-cols-6" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">Shape (Single Choice):</label>
-                  <RadioGroup options={tongueBodyShapeOptions} name="tongueBodyShape" selectedValue={formData.tongue.body.shape} onChange={e => handleTongueBodyChange('shape', e.target.value)} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-6 gap-y-2"/>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Shape (Multi-Choice):</label>
+                  <CheckboxGroup options={tongueBodyShapeOptions} selected={formData.tongue.body.shape} onChange={(val, checked) => handleTongueBodyArrayChange('shape', val, checked)} gridCols="grid-cols-2 sm:grid-cols-3 md:grid-cols-4" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1">Shape Modifiers (Multi-Choice):</label>
@@ -1724,21 +1720,6 @@ Instructions:
         </div>
         <div className="space-y-6">
             <div>
-                <label className="block text-lg font-medium text-gray-700 mb-2">Eight Principles</label>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-4">
-                    <RadioGroup name="exteriorInterior" selectedValue={formData.diagnosisAndTreatment.eightPrinciples.exteriorInterior} onChange={handleEightPrincipleChange} options={[{value: 'Exterior', label: 'Exterior'}, {value: 'Interior', label: 'Interior'}]} />
-                    <RadioGroup name="heatCold" selectedValue={formData.diagnosisAndTreatment.eightPrinciples.heatCold} onChange={handleEightPrincipleChange} options={[{value: 'Heat', label: 'Heat'}, {value: 'Cold', label: 'Cold'}]} />
-                    <RadioGroup name="excessDeficient" selectedValue={formData.diagnosisAndTreatment.eightPrinciples.excessDeficient} onChange={handleEightPrincipleChange} options={[{value: 'Excess', label: 'Excess'}, {value: 'Deficient', label: 'Deficient'}]} />
-                    <RadioGroup name="yangYin" selectedValue={formData.diagnosisAndTreatment.eightPrinciples.yangYin} onChange={handleEightPrincipleChange} options={[{value: 'Yang', label: 'Yang'}, {value: 'Yin', label: 'Yin'}]} />
-                </div>
-            </div>
-            
-             <InputField label="Etiology" id="etiology" name="etiology" value={formData.diagnosisAndTreatment.etiology} onChange={handleDiagnosisChange} />
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputField label="TCM Diagnosis (Syndrome/Differentiation)" id="tcmDiagnosis" name="tcmDiagnosis" value={formData.diagnosisAndTreatment.tcmDiagnosis} onChange={handleDiagnosisChange} />
-                <InputField label="Treatment Principle" id="treatmentPrinciple" name="treatmentPrinciple" value={formData.diagnosisAndTreatment.treatmentPrinciple} onChange={handleDiagnosisChange} />
-             </div>
-             <div>
                 <label className="block text-lg font-medium text-gray-700 mb-2">Acupuncture Method</label>
                 <CheckboxGroup
                     options={acupunctureMethodOptions}
@@ -1757,6 +1738,22 @@ Instructions:
                     />
                 )}
             </div>
+            
+            <div>
+                <label className="block text-lg font-medium text-gray-700 mb-2">Eight Principles</label>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-4">
+                    <RadioGroup name="exteriorInterior" selectedValue={formData.diagnosisAndTreatment.eightPrinciples.exteriorInterior} onChange={handleEightPrincipleChange} options={[{value: 'Exterior', label: 'Exterior'}, {value: 'Interior', label: 'Interior'}]} />
+                    <RadioGroup name="heatCold" selectedValue={formData.diagnosisAndTreatment.eightPrinciples.heatCold} onChange={handleEightPrincipleChange} options={[{value: 'Heat', label: 'Heat'}, {value: 'Cold', label: 'Cold'}]} />
+                    <RadioGroup name="excessDeficient" selectedValue={formData.diagnosisAndTreatment.eightPrinciples.excessDeficient} onChange={handleEightPrincipleChange} options={[{value: 'Excess', label: 'Excess'}, {value: 'Deficient', label: 'Deficient'}]} />
+                    <RadioGroup name="yangYin" selectedValue={formData.diagnosisAndTreatment.eightPrinciples.yangYin} onChange={handleEightPrincipleChange} options={[{value: 'Yang', label: 'Yang'}, {value: 'Yin', label: 'Yin'}]} />
+                </div>
+            </div>
+            
+             <InputField label="Etiology" id="etiology" name="etiology" value={formData.diagnosisAndTreatment.etiology} onChange={handleDiagnosisChange} />
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <InputField label="TCM Diagnosis (Syndrome/Differentiation)" id="tcmDiagnosis" name="tcmDiagnosis" value={formData.diagnosisAndTreatment.tcmDiagnosis} onChange={handleDiagnosisChange} />
+                <InputField label="Treatment Principle" id="treatmentPrinciple" name="treatmentPrinciple" value={formData.diagnosisAndTreatment.treatmentPrinciple} onChange={handleDiagnosisChange} />
+             </div>
              <div>
                 <label htmlFor="acupuncturePoints" className="block text-sm font-medium text-gray-700 mb-1">Acupuncture Points</label>
                 <textarea id="acupuncturePoints" name="acupuncturePoints" value={formData.diagnosisAndTreatment.acupuncturePoints} onChange={handleDiagnosisChange} rows={4} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>

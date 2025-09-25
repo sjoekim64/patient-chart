@@ -59,10 +59,10 @@ const getNewPatientState = (chartType: 'new' | 'follow-up', clinicInfo?: any): P
         notes: '',
     },
     diagnosisAndTreatment: {
-      eightPrinciples: { exteriorInterior: '', heatCold: '', excessDeficient: '', yangYin: '' },
-      etiology: '', tcmDiagnosis: '', treatmentPrinciple: '', 
       acupunctureMethod: ['TCM Body'],
       acupunctureMethodOther: '',
+      eightPrinciples: { exteriorInterior: '', heatCold: '', excessDeficient: '', yangYin: '' },
+      etiology: '', tcmDiagnosis: '', treatmentPrinciple: '', 
       acupuncturePoints: '', herbalTreatment: '',
       selectedTreatment: 'None', otherTreatmentText: '', icd: '', cpt: '',
       therapistName: clinicInfo?.therapistName || '', therapistLicNo: clinicInfo?.therapistLicenseNo || '',
